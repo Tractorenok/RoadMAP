@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Дорожная карта</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #030303;
+      --panel: rgba(12, 12, 14, 0.68);
+      --panel-strong: rgba(18, 18, 21, 0.84);
+      --line: rgba(255, 255, 255, 0.14);
+      --line-strong: rgba(255, 255, 255, 0.3);
+      --text: rgba(255, 255, 255, 0.92);
+      --muted: rgba(255, 255, 255, 0.58);
+      --faint: rgba(255, 255, 255, 0.28);
+      --violet: #b08cff;
+      --violet-dim: rgba(176, 140, 255, 0.24);
+      --amber: #d4b46b;
+      --green: #8ed8a3;
+      --radius: 8px;
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.72);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+    }
+
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "SF Pro Text", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+      letter-spacing: 0;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: geometricPrecision;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .scene {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 49% 32%, rgba(255, 255, 255, 0.13), transparent 8%),
+        radial-gradient(circle at 54% 28%, rgba(255, 255, 255, 0.05), transparent 16%),
+        radial-gradient(circle at 20% 72%, rgba(255, 255, 255, 0.06), transparent 20%),
+        linear-gradient(180deg, #090909 0%, #020202 72%, #000 100%);
+      z-index: -4;
+    }
+
+    .scene::before {
+      content: "";
+      position: absolute;
+      inset: -4%;
+      background:
+        linear-gradient(105deg, transparent 0 9%, rgba(255, 255, 255, 0.06) 10%, transparent 18%),
+        linear-gradient(18deg, transparent 0 61%, rgba(255, 255, 255, 0.04) 62%, transparent 70%),
+        radial-gradient(ellipse at 18% 22%, rgba(255, 255, 255, 0.12), transparent 28%),
+        radial-gradient(ellipse at 82% 42%, rgba(255, 255, 255, 0.08), transparent 22%);
+      filter: blur(6px) grayscale(1);
+      opacity: 0.5;
+    }
+
+    .scene::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(0, 0, 0, 0.7), transparent 22%, transparent 74%, rgba(0, 0, 0, 0.84)),
+        linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.78));
+      z-index: 1;
+    }
+
+    .mountains {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 35vh;
+      background:
+        linear-gradient(148deg, transparent 0 13%, rgba(255, 255, 255, 0.05) 13.4% 14%, transparent 14.5%),
+        linear-gradient(30deg, #010101 0 28%, transparent 28.4%),
+        linear-gradient(153deg, transparent 0 41%, #030303 41.5% 62%, transparent 62.5%),
+        linear-gradient(14deg, transparent 0 55%, #040404 55.5% 77%, transparent 77.5%);
+      opacity: 0.9;
+      z-index: -2;
+    }
+
+    .temple {
+      position: absolute;
+      right: 6vw;
+      bottom: 28vh;
+      width: 24vw;
+      min-width: 260px;
+      height: 17vh;
+      opacity: 0.22;
+      filter: blur(0.3px);
+      background:
+        linear-gradient(#000, #000) 9% 48% / 82% 8% no-repeat,
+        linear-gradient(#000, #000) 16% 60% / 68% 10% no-repeat,
+        linear-gradient(#000, #000) 26% 71% / 50% 28% no-repeat,
+        linear-gradient(#000, #000) 4% 82% / 91% 7% no-repeat;
+      clip-path: polygon(0 26%, 10% 8%, 26% 19%, 36% 0, 51% 19%, 65% 4%, 78% 21%, 100% 16%, 92% 100%, 0 100%);
+    }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.12;
+      background-image:
+        repeating-radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.9) 0 0.45px, transparent 0.65px 7px),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.14) 0 1px, transparent 1px 4px);
+      mix-blend-mode: screen;
+    }
+
+    .snow {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .snow i {
+      position: absolute;
+      display: block;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.72);
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.9);
+      animation: drift var(--duration) linear infinite;
+      animation-delay: var(--delay);
+      opacity: var(--alpha);
+      transform: translate3d(var(--x), -12vh, 0);
+    }
+
+    @keyframes drift {
+      to {
+        transform: translate3d(calc(var(--x) + var(--sway)), 112vh, 0);
+      }
+    }
+
+    .shell {
+      position: relative;
+      z-index: 2;
+      width: min(1180px, calc(100% - 40px));
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 40px 0 44px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 58px;
+    }
+
+    .tiny-icon svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .utility {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(10, 10, 10, 0.58);
+      backdrop-filter: blur(10px);
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 650;
+    }
+
+    .tiny-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.66);
+    }
+
+    .hero {
+      display: grid;
+      justify-items: center;
+      text-align: center;
+      margin-bottom: 42px;
+    }
+
+    .avatar {
+      position: relative;
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      background:
+        radial-gradient(circle at 40% 28%, rgba(255, 255, 255, 0.9), transparent 16%),
+        radial-gradient(circle at 60% 38%, rgba(255, 255, 255, 0.74), transparent 18%),
+        linear-gradient(135deg, #f0f0f0, #565656 42%, #111);
+      box-shadow:
+        0 0 0 6px rgba(255, 255, 255, 0.06),
+        0 18px 50px rgba(0, 0, 0, 0.7);
+    }
+
+    .avatar img,
+    .mini-avatar img,
+    .hero-image-card img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .avatar img {
+      object-position: center 42%;
+      filter: grayscale(0.88) contrast(1.08) brightness(0.9);
+    }
+
+    .title {
+      margin: 13px 0 6px;
+      color: white;
+      font-size: clamp(1.75rem, 4vw, 2.55rem);
+      line-height: 1;
+      font-weight: 800;
+      letter-spacing: 0;
+      text-shadow: 0 0 28px rgba(255, 255, 255, 0.38);
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 650;
+    }
+
+    .profile-card {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 11px;
+      width: min(358px, 100%);
+      margin-top: 20px;
+      padding: 10px 12px;
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--line);
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow);
+    }
+
+    .mini-avatar {
+      width: 38px;
+      height: 38px;
+      overflow: hidden;
+      border-radius: var(--radius);
+      background: #080808;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+    }
+
+    .mini-avatar img {
+      object-position: center;
+      filter: grayscale(0.25) contrast(1.05) brightness(0.82);
+    }
+
+    .profile-copy {
+      text-align: left;
+      min-width: 0;
+    }
+
+    .profile-copy strong {
+      display: block;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.92);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .profile-copy span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.7rem;
+      margin-top: 2px;
+    }
+
+    .verify {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--violet);
+      color: #070707;
+      display: grid;
+      place-items: center;
+      font-size: 0.72rem;
+      font-weight: 900;
+    }
+
+    .hero-image-card {
+      position: relative;
+      width: min(360px, 100%);
+      height: 112px;
+      margin-top: 16px;
+      overflow: hidden;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.06);
+      box-shadow: 0 18px 54px rgba(0, 0, 0, 0.58);
+    }
+
+    .hero-image-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(0, 0, 0, 0.22), transparent 36%, rgba(0, 0, 0, 0.3)),
+        linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.34));
+      pointer-events: none;
+    }
+
+    .hero-image-card img {
+      object-position: center 28%;
+      filter: grayscale(0.62) contrast(1.04) brightness(0.74);
+    }
+
+    .socials {
+      display: flex;
+      gap: 9px;
+      margin-top: 16px;
+    }
+
+    .socials span {
+      min-width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-shadow: 0 0 18px rgba(255, 255, 255, 0.55);
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: minmax(240px, 300px) 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .side-panel,
+    .roadmap {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+    }
+
+    .side-panel {
+      position: sticky;
+      top: 24px;
+      padding: 18px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .eyebrow {
+      color: var(--faint);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.68rem;
+      font-weight: 800;
+    }
+
+    .progress-value {
+      display: flex;
+      align-items: end;
+      gap: 8px;
+      margin: 2px 0 8px;
+    }
+
+    .progress-value strong {
+      font-size: 3.2rem;
+      line-height: 0.92;
+      color: white;
+      letter-spacing: 0;
+      text-shadow: 0 0 28px rgba(255, 255, 255, 0.22);
+    }
+
+    .progress-value span {
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 5px;
+      font-size: 0.8rem;
+    }
+
+    .bar {
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+    }
+
+    .bar i {
+      display: block;
+      height: 100%;
+      width: var(--progress);
+      background: linear-gradient(90deg, white, var(--violet));
+      box-shadow: 0 0 18px var(--violet-dim);
+      border-radius: inherit;
+      transition: width 220ms ease;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .stat {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.045);
+    }
+
+    .stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 750;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .stat strong {
+      display: block;
+      margin-top: 7px;
+      color: white;
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .filter-btn,
+    .reset-btn {
+      width: 100%;
+      min-height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.045);
+      color: var(--muted);
+      cursor: pointer;
+      padding: 0 12px;
+      font-size: 0.78rem;
+      font-weight: 760;
+      transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
+    }
+
+    .filter-btn::after {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--faint);
+      box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+    }
+
+    .filter-btn.active {
+      color: white;
+      border-color: rgba(255, 255, 255, 0.38);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .filter-btn.active::after {
+      background: var(--violet);
+      box-shadow: 0 0 15px var(--violet);
+    }
+
+    .reset-btn {
+      color: rgba(255, 255, 255, 0.72);
+    }
+
+    .reset-btn:hover,
+    .filter-btn:hover {
+      color: white;
+      border-color: var(--line-strong);
+    }
+
+    .roadmap {
+      padding: 18px;
+    }
+
+    .roadmap-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .roadmap-head h2 {
+      margin: 2px 0 0;
+      color: white;
+      font-size: clamp(1.15rem, 2vw, 1.55rem);
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .roadmap-head p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.45;
+      max-width: 620px;
+    }
+
+    .ghost-tag {
+      flex: 0 0 auto;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 760;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .timeline {
+      position: relative;
+      display: grid;
+      gap: 12px;
+      padding-top: 18px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 27px;
+      top: 26px;
+      bottom: 26px;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.36), transparent);
+    }
+
+    .stage {
+      position: relative;
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 12px;
+    }
+
+    .marker {
+      position: relative;
+      z-index: 2;
+      width: 56px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .marker i {
+      width: 32px;
+      height: 32px;
+      margin-top: 11px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line-strong);
+      background: #070707;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 0.72rem;
+      font-style: normal;
+      font-weight: 900;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.08);
+    }
+
+    .stage.completed .marker i {
+      color: #041007;
+      background: var(--green);
+      border-color: var(--green);
+      box-shadow: 0 0 24px rgba(142, 216, 163, 0.24);
+    }
+
+    .stage.partial .marker i {
+      color: #090806;
+      background: var(--amber);
+      border-color: var(--amber);
+      box-shadow: 0 0 24px rgba(212, 180, 107, 0.22);
+    }
+
+    .stage-card {
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.035)),
+        var(--panel-strong);
+      overflow: hidden;
+    }
+
+    .stage-main {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: center;
+      padding: 14px 14px 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .stage-main h3 {
+      margin: 0;
+      color: white;
+      font-size: 1rem;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .stage-main small {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    .stage-percent {
+      color: white;
+      border: 1px solid var(--line);
+      background: rgba(0, 0, 0, 0.28);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.75rem;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+
+    .tasks {
+      display: grid;
+      gap: 1px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .task-block {
+      display: grid;
+      gap: 8px;
+      padding: 10px 12px 12px;
+      background: rgba(5, 5, 6, 0.72);
+    }
+
+    .teacher-chip {
+      width: 24px;
+      height: 24px;
+      min-height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.055);
+      color: rgba(255, 255, 255, 0.62);
+      cursor: pointer;
+      padding: 0;
+      font-size: 0.82rem;
+      font-weight: 920;
+      line-height: 1;
+      transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .teacher-chip:hover,
+    .teacher-chip[aria-expanded="true"] {
+      color: white;
+      border-color: rgba(176, 140, 255, 0.52);
+      background: rgba(176, 140, 255, 0.14);
+    }
+
+    .task-note {
+      margin: 0;
+      border: 1px solid rgba(176, 140, 255, 0.22);
+      border-radius: var(--radius);
+      background: rgba(176, 140, 255, 0.08);
+      color: rgba(255, 255, 255, 0.72);
+      padding: 10px 12px;
+      font-size: 0.76rem;
+      line-height: 1.45;
+      font-weight: 620;
+    }
+
+    .task {
+      display: grid;
+      grid-template-columns: 28px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      min-height: 48px;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: var(--radius);
+      padding: 9px 10px;
+      background: rgba(0, 0, 0, 0.22);
+    }
+
+    .task input {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      background: rgba(255, 255, 255, 0.04);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+    }
+
+    .task input::after {
+      content: "";
+      width: 8px;
+      height: 4px;
+      border-left: 2px solid #050505;
+      border-bottom: 2px solid #050505;
+      transform: rotate(-45deg) translateY(-1px);
+      opacity: 0;
+    }
+
+    .task input:checked {
+      background: white;
+      border-color: white;
+    }
+
+    .task input:checked::after {
+      opacity: 1;
+    }
+
+    .task label {
+      min-width: 0;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 0.83rem;
+      line-height: 1.35;
+      font-weight: 650;
+      cursor: pointer;
+    }
+
+    .task.done label {
+      color: var(--faint);
+      text-decoration: line-through;
+    }
+
+    .meta {
+      color: rgba(255, 255, 255, 0.48);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      padding: 5px 8px;
+      font-size: 0.68rem;
+      font-weight: 760;
+      white-space: nowrap;
+    }
+
+    .empty {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      min-height: 160px;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-weight: 750;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    @media (max-width: 900px) {
+      .shell {
+        width: min(100% - 28px, 760px);
+        padding-top: 20px;
+      }
+
+      .topbar {
+        margin-bottom: 36px;
+      }
+
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+
+      .side-panel {
+        position: static;
+      }
+
+      .filters {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .reset-btn {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .shell {
+        width: min(100% - 22px, 460px);
+      }
+
+      .utility {
+        max-width: 230px;
+      }
+
+      .hero {
+        margin-bottom: 28px;
+      }
+
+      .profile-card {
+        width: min(320px, 100%);
+      }
+
+      .filters,
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .roadmap {
+        padding: 12px;
+      }
+
+      .roadmap-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .timeline::before {
+        left: 18px;
+      }
+
+      .stage {
+        grid-template-columns: 38px 1fr;
+        gap: 8px;
+      }
+
+      .marker {
+        width: 38px;
+      }
+
+      .marker i {
+        width: 28px;
+        height: 28px;
+        font-size: 0.66rem;
+      }
+
+      .stage-main {
+        grid-template-columns: 1fr;
+      }
+
+      .stage-percent {
+        width: fit-content;
+      }
+
+      .task {
+        grid-template-columns: 24px 1fr;
+      }
+
+      .meta {
+        grid-column: 2;
+        width: fit-content;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="scene" aria-hidden="true">
+    <div class="temple"></div>
+    <div class="mountains"></div>
+  </div>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="snow" aria-hidden="true" id="snow"></div>
+
+  <main class="shell">
+    <header class="topbar">
+      <div class="utility">
+        <span class="tiny-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="8"></circle>
+            <path d="m9 12 2 2 4-5"></path>
+          </svg>
+        </span>
+        <span>дорожная карта / личный путь</span>
+        <span class="tiny-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 12h14"></path>
+            <path d="M12 5v14"></path>
+          </svg>
+        </span>
+      </div>
+    </header>
+
+    <section class="hero" aria-label="профиль">
+      <div class="avatar">
+        <img src="assets/avatar-main.jpg" alt="Аватар дорожной карты">
+      </div>
+      <h1 class="title">Дорожная карта</h1>
+      <p class="subtitle">сейчас прокачиваем фронтенд-дисциплину</p>
+      <div class="profile-card">
+        <div class="mini-avatar">
+          <img src="assets/mini-card.jpg" alt="Миниатюра профиля">
+        </div>
+        <div class="profile-copy">
+          <strong>личная дорожная карта</strong>
+          <span id="statusLine">0 / 15 задач выполнено</span>
+        </div>
+        <div class="verify">✓</div>
+      </div>
+      <div class="hero-image-card">
+        <img src="assets/hero-card.webp" alt="Фотография профиля">
+      </div>
+      <div class="socials" aria-label="стек">
+        <span>HTML</span>
+        <span>CSS</span>
+        <span>JS</span>
+        <span>React</span>
+      </div>
+    </section>
+
+    <section class="dashboard">
+      <aside class="side-panel" aria-label="управление прогрессом">
+        <div>
+          <span class="eyebrow">общий прогресс</span>
+          <div class="progress-value">
+            <strong id="globalPercent">0%</strong>
+            <span id="taskCounter">0 / 15</span>
+          </div>
+          <div class="bar" aria-hidden="true">
+            <i id="progressBar" style="--progress: 0%"></i>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat">
+            <span>этапы</span>
+            <strong id="stageCounter">5</strong>
+          </div>
+          <div class="stat">
+            <span>фокус</span>
+            <strong id="focusLabel">основа</strong>
+          </div>
+        </div>
+
+        <div class="filters" id="filterContainer">
+          <button class="filter-btn active" data-filter="all">все этапы</button>
+          <button class="filter-btn" data-filter="completed">завершено</button>
+          <button class="filter-btn" data-filter="incomplete">в работе</button>
+          <button class="reset-btn" id="resetAllBtn">сбросить прогресс <span>×</span></button>
+        </div>
+      </aside>
+
+      <section class="roadmap" aria-label="список дорожной карты">
+        <div class="roadmap-head">
+          <div>
+            <span class="eyebrow">порядок прохождения</span>
+            <h2>Индивидуальная дорожная карта</h2>
+            <p>Пять этапов развития в одном темном интерфейсе: без лишней декоративности, с фокусом на прогресс, сроки и следующие действия.</p>
+          </div>
+          <div class="ghost-tag" id="activeFilterLabel">все этапы</div>
+        </div>
+        <div class="timeline" id="timelineRoot"></div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const roadmapData = [
+      {
+        id: 1,
+        name: "Фундамент",
+        icon: "01",
+        focus: "основа",
+        tasks: [
+          { id: "t1", text: "Изучить основы HTML5 и семантическую вёрстку", completed: false, meta: "1 неделя", note: "Пояснение: задача проверяет базу HTML5 — структуру документа, смысловые теги, доступность и SEO-логику. Важно, чтобы ученик понимал назначение элементов, а не просто собирал страницу из div." },
+          { id: "t2", text: "Освоить CSS3: Flexbox, Grid, адаптивность", completed: false, meta: "2 недели", note: "Пояснение: здесь отрабатывается визуальная база фронтенда — раскладка через Flexbox и Grid, брейкпоинты, резиновая ширина и контроль переполнений на мобильных экранах." },
+          { id: "t3", text: "Понять базовый JavaScript: переменные, функции, DOM", completed: false, meta: "2 недели", note: "Пояснение: задача про фундамент JS — типы данных, функции, условия, события и работу с DOM. Цель — чтобы ученик мог оживить интерфейс без фреймворков." }
+        ]
+      },
+      {
+        id: 2,
+        name: "Продвинутый JS",
+        icon: "02",
+        focus: "асинхронность",
+        tasks: [
+          { id: "t4", text: "Изучить асинхронность: Promise, async/await", completed: false, meta: "1.5 нед", note: "Пояснение: ученик должен понимать event loop на практическом уровне, цепочки Promise, async/await и отличие последовательного выполнения от параллельных запросов." },
+          { id: "t5", text: "Работа с API, fetch, обработка ошибок", completed: false, meta: "1 неделя", note: "Пояснение: задача закрепляет клиент-серверное мышление — HTTP-запросы, JSON, статусы ответа, loading/error состояния и аккуратную обработку неуспешных сценариев." },
+          { id: "t6", text: "Модули, замыкания, прототипы", completed: false, meta: "1.5 нед", note: "Пояснение: здесь проверяются внутренние механики JavaScript: область видимости, замыкания, import/export, прототипное наследование и организация кода по модулям." }
+        ]
+      },
+      {
+        id: 3,
+        name: "Экосистема React",
+        icon: "03",
+        focus: "React",
+        tasks: [
+          { id: "t7", text: "Компоненты, props, состояние (useState)", completed: false, meta: "1.5 нед", note: "Пояснение: задача вводит компонентное мышление React — декомпозицию интерфейса, передачу данных через props и локальное состояние через useState." },
+          { id: "t8", text: "Эффекты, контекст и хуки (useEffect, useContext)", completed: false, meta: "2 недели", note: "Пояснение: ученик учится работать с жизненным циклом через useEffect, выносить общие данные в контекст и не путать вычисления, эффекты и состояние." },
+          { id: "t9", text: "Маршрутизация React Router + управление состоянием", completed: false, meta: "2 недели", note: "Пояснение: задача проверяет навигацию SPA, вложенные маршруты, параметры URL и базовую архитектуру состояния между страницами приложения." }
+        ]
+      },
+      {
+        id: 4,
+        name: "Инструменты и DevOps",
+        icon: "04",
+        focus: "инструменты",
+        tasks: [
+          { id: "t10", text: "Git и GitHub: ветвление, PR, совместный процесс", completed: false, meta: "1 неделя", note: "Пояснение: задача про рабочий процесс разработчика — ветки, коммиты, pull request, ревью и понимание того, как не ломать общий main." },
+          { id: "t11", text: "Основы CI/CD и деплой (Vercel, Netlify)", completed: false, meta: "5 дней", note: "Пояснение: ученик должен понять путь кода до продакшена: build, проверки, переменные окружения, автоматический деплой и чтение логов сборки." },
+          { id: "t12", text: "Webpack/Vite базовая настройка", completed: false, meta: "5 дней", note: "Пояснение: задача раскрывает сборку проекта — dev server, entry point, обработку ассетов, npm scripts и разницу между разработческой и production-сборкой." }
+        ]
+      },
+      {
+        id: 5,
+        name: "Финальный проект",
+        icon: "05",
+        focus: "релиз",
+        tasks: [
+          { id: "t13", text: "Разработка полноценного SPA приложения", completed: false, meta: "3 недели", note: "Пояснение: финальная сборка навыков в одном проекте — структура приложения, страницы, состояние, API, адаптивная верстка и доведение интерфейса до рабочего состояния." },
+          { id: "t14", text: "Тестирование (Jest, React Testing Library)", completed: false, meta: "1.5 нед", note: "Пояснение: задача формирует привычку проверять поведение кода: unit-тесты, пользовательские сценарии, мок API и защита ключевых функций от регрессий." },
+          { id: "t15", text: "Портфолио и презентация проекта", completed: false, meta: "1 неделя", note: "Пояснение: ученик оформляет результат как публичный кейс: описание задачи, стек, демонстрация, ссылка на репозиторий и понятная защита принятых решений." }
+        ]
+      }
+    ];
+
+    let currentData = [];
+    let currentFilter = "all";
+
+    const storageKey = "individualRoadmapProgress";
+    const timelineRoot = document.getElementById("timelineRoot");
+    const globalPercent = document.getElementById("globalPercent");
+    const taskCounter = document.getElementById("taskCounter");
+    const statusLine = document.getElementById("statusLine");
+    const progressBar = document.getElementById("progressBar");
+    const focusLabel = document.getElementById("focusLabel");
+    const activeFilterLabel = document.getElementById("activeFilterLabel");
+
+    function loadProgress() {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        try {
+          const savedTasks = JSON.parse(saved);
+          for (const stage of roadmapData) {
+            for (const task of stage.tasks) {
+              task.completed = savedTasks[task.id] === true;
+            }
+          }
+        } catch (error) {
+          localStorage.removeItem(storageKey);
+        }
+      }
+      currentData = JSON.parse(JSON.stringify(roadmapData));
+    }
+
+    function saveProgress() {
+      const progressMap = {};
+      for (const stage of currentData) {
+        for (const task of stage.tasks) {
+          progressMap[task.id] = task.completed;
+        }
+      }
+      localStorage.setItem(storageKey, JSON.stringify(progressMap));
+    }
+
+    function getStageProgress(stage) {
+      if (!stage.tasks.length) return 1;
+      return stage.tasks.filter((task) => task.completed).length / stage.tasks.length;
+    }
+
+    function getStageStatus(stage) {
+      const progress = getStageProgress(stage);
+      if (progress === 1) return "completed";
+      if (progress > 0) return "partial";
+      return "default";
+    }
+
+    function getGlobalStats() {
+      let total = 0;
+      let done = 0;
+      for (const stage of currentData) {
+        total += stage.tasks.length;
+        done += stage.tasks.filter((task) => task.completed).length;
+      }
+      return {
+        total,
+        done,
+        percent: total === 0 ? 0 : Math.round((done / total) * 100)
+      };
+    }
+
+    function updateStatsUI() {
+      const stats = getGlobalStats();
+      const activeStage = currentData.find((stage) => getStageProgress(stage) < 1) || currentData[currentData.length - 1];
+      globalPercent.textContent = `${stats.percent}%`;
+      taskCounter.textContent = `${stats.done} / ${stats.total}`;
+      statusLine.textContent = `${stats.done} / ${stats.total} задач выполнено`;
+      progressBar.style.setProperty("--progress", `${stats.percent}%`);
+      focusLabel.textContent = activeStage ? activeStage.focus : "готово";
+      activeFilterLabel.textContent = currentFilter === "all" ? "все этапы" : currentFilter === "completed" ? "завершено" : "в работе";
+    }
+
+    function shouldShowStage(stage, filter) {
+      const progress = getStageProgress(stage);
+      if (filter === "completed") return progress === 1;
+      if (filter === "incomplete") return progress < 1;
+      return true;
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"]/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;"
+      }[char]));
+    }
+
+    function renderTimeline(filter) {
+      const filteredStages = currentData.filter((stage) => shouldShowStage(stage, filter));
+
+      if (!filteredStages.length) {
+        timelineRoot.innerHTML = '<div class="empty">по этому фильтру этапов нет</div>';
+        return;
+      }
+
+      timelineRoot.innerHTML = filteredStages.map((stage) => {
+        const progress = getStageProgress(stage);
+        const status = getStageStatus(stage);
+        const done = stage.tasks.filter((task) => task.completed).length;
+        const total = stage.tasks.length;
+        const taskHtml = stage.tasks.map((task) => `
+          <div class="task-block ${task.completed ? "done" : ""}" data-task-id="${escapeHtml(task.id)}">
+            <button class="teacher-chip" type="button" data-note-target="${escapeHtml(task.id)}" aria-expanded="false" aria-controls="note-${escapeHtml(task.id)}" aria-label="Пояснение к задаче" title="Пояснение к задаче">!</button>
+            <p class="task-note" id="note-${escapeHtml(task.id)}" hidden>${escapeHtml(task.note)}</p>
+            <div class="task ${task.completed ? "done" : ""}">
+              <input id="${escapeHtml(task.id)}" type="checkbox" ${task.completed ? "checked" : ""} data-id="${escapeHtml(task.id)}">
+              <label for="${escapeHtml(task.id)}">${escapeHtml(task.text)}</label>
+              <span class="meta">${escapeHtml(task.meta)}</span>
+            </div>
+          </div>
+        `).join("");
+
+        return `
+          <article class="stage ${status}" data-stage-id="${stage.id}">
+            <div class="marker"><i>${escapeHtml(stage.icon)}</i></div>
+            <div class="stage-card">
+              <div class="stage-main">
+                <div>
+                  <h3>${escapeHtml(stage.name)}</h3>
+                  <small>${done}/${total} задач выполнено</small>
+                </div>
+                <div class="stage-percent">${Math.round(progress * 100)}%</div>
+              </div>
+              <div class="tasks">${taskHtml}</div>
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      timelineRoot.querySelectorAll("input[type='checkbox']").forEach((checkbox) => {
+        checkbox.addEventListener("change", () => {
+          toggleTask(checkbox.dataset.id, checkbox.checked);
+        });
+      });
+
+      timelineRoot.querySelectorAll(".teacher-chip").forEach((button) => {
+        button.addEventListener("click", () => {
+          const taskBlock = button.closest(".task-block");
+          const note = taskBlock.querySelector(".task-note");
+          const shouldOpen = note.hidden;
+          note.hidden = !shouldOpen;
+          taskBlock.classList.toggle("open-note", shouldOpen);
+          button.setAttribute("aria-expanded", String(shouldOpen));
+        });
+      });
+    }
+
+    function toggleTask(taskId, completed) {
+      for (const stage of currentData) {
+        const task = stage.tasks.find((item) => item.id === taskId);
+        if (task) {
+          task.completed = completed;
+          saveProgress();
+          updateStatsUI();
+          renderTimeline(currentFilter);
+          return;
+        }
+      }
+    }
+
+    function resetAllProgress() {
+      for (const stage of currentData) {
+        for (const task of stage.tasks) {
+          task.completed = false;
+        }
+      }
+      saveProgress();
+      updateStatsUI();
+      renderTimeline(currentFilter);
+    }
+
+    function initFilters() {
+      document.querySelectorAll(".filter-btn").forEach((button) => {
+        button.addEventListener("click", () => {
+          currentFilter = button.dataset.filter;
+          document.querySelectorAll(".filter-btn").forEach((item) => item.classList.remove("active"));
+          button.classList.add("active");
+          updateStatsUI();
+          renderTimeline(currentFilter);
+        });
+      });
+    }
+
+    function initSnow() {
+      const snow = document.getElementById("snow");
+      const flakes = Array.from({ length: 46 }, (_, index) => {
+        const flake = document.createElement("i");
+        flake.style.setProperty("--x", `${Math.random() * 100}vw`);
+        flake.style.setProperty("--sway", `${(Math.random() * 12 - 6).toFixed(2)}vw`);
+        flake.style.setProperty("--duration", `${8 + Math.random() * 12}s`);
+        flake.style.setProperty("--delay", `${-1 * Math.random() * 16}s`);
+        flake.style.setProperty("--alpha", `${0.25 + Math.random() * 0.65}`);
+        flake.style.width = `${index % 7 === 0 ? 4 : 2 + Math.random() * 2}px`;
+        flake.style.height = flake.style.width;
+        return flake;
+      });
+      snow.append(...flakes);
+    }
+
+    document.getElementById("resetAllBtn").addEventListener("click", resetAllProgress);
+
+    loadProgress();
+    updateStatsUI();
+    renderTimeline(currentFilter);
+    initFilters();
+    initSnow();
+  </script>
+</body>
+</html>
