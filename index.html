@@ -164,7 +164,7 @@
       padding: 40px 0 44px;
     }
 
-    .topbar {
+    .dr {
       display: flex;
       justify-content: flex-end;
       align-items: center;
@@ -180,20 +180,6 @@
       fill: none;
       stroke-linecap: round;
       stroke-linejoin: round;
-    }
-
-    .utility {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 8px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: rgba(10, 10, 10, 0.58);
-      backdrop-filter: blur(10px);
-      color: var(--muted);
-      font-size: 0.72rem;
-      font-weight: 650;
     }
 
     .tiny-icon {
@@ -904,24 +890,6 @@
   <div class="snow" aria-hidden="true" id="snow"></div>
 
   <main class="shell">
-    <header class="topbar">
-      <div class="utility">
-        <span class="tiny-icon">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="12" r="8"></circle>
-            <path d="m9 12 2 2 4-5"></path>
-          </svg>
-        </span>
-        <span>дорожная карта / личный путь</span>
-        <span class="tiny-icon">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M5 12h14"></path>
-            <path d="M12 5v14"></path>
-          </svg>
-        </span>
-      </div>
-    </header>
-
     <section class="hero" aria-label="профиль">
       <div class="avatar">
         <img src="assets/avatar-main.jpg" alt="Аватар дорожной карты">
@@ -986,7 +954,6 @@
           <div>
             <span class="eyebrow">порядок прохождения</span>
             <h2>Индивидуальная дорожная карта</h2>
-            <p>Пять этапов развития в одном темном интерфейсе: без лишней декоративности, с фокусом на прогресс, сроки и следующие действия.</p>
           </div>
           <div class="ghost-tag" id="activeFilterLabel">все этапы</div>
         </div>
