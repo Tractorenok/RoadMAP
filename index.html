@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Дорожная карта</title>
+  <title>Full-stack разработчик | Портфолио</title>
   <style>
     :root {
       color-scheme: dark;
@@ -455,15 +455,20 @@
     }
 
     .filters {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .stage-tabs-list {
       display: grid;
-      grid-template-columns: 1fr;
       gap: 8px;
     }
 
     .filter-btn,
     .reset-btn {
       width: 100%;
-      min-height: 38px;
+      min-height: 42px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -476,41 +481,78 @@
       padding: 0 12px;
       font-size: 0.78rem;
       font-weight: 760;
-      transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
+      transition:
+        transform 180ms cubic-bezier(0.25, 0.8, 0.25, 1),
+        border-color 160ms ease,
+        background 160ms ease,
+        color 160ms ease,
+        box-shadow 160ms ease;
     }
 
-    .filter-btn::after {
-      content: "";
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--faint);
-      box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+    .filter-btn {
+      min-height: 46px;
+      justify-content: flex-start;
+      border: none;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 0 18px 0 14px;
+      background: rgba(255, 255, 255, 0.052);
+      clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 100%, 0% 100%);
+      letter-spacing: 0.04em;
+      text-align: left;
+      text-transform: uppercase;
+      transform-origin: left center;
+    }
+
+    .filter-btn span {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .filter-btn small {
+      min-width: 38px;
+      margin-left: auto;
+      color: var(--faint);
+      font-size: 0.68rem;
+      font-weight: 850;
+      letter-spacing: 0;
+      text-align: right;
     }
 
     .filter-btn.active {
       color: white;
-      border-color: rgba(255, 255, 255, 0.38);
-      background: rgba(255, 255, 255, 0.1);
+      border-left: 5px solid var(--violet);
+      background: rgba(255, 255, 255, 0.14);
+      box-shadow: -10px 0 22px var(--violet-dim);
+      text-shadow: 0 0 16px rgba(255, 255, 255, 0.28);
     }
 
-    .filter-btn.active::after {
-      background: var(--violet);
-      box-shadow: 0 0 15px var(--violet);
+    .filter-btn.active small {
+      color: white;
+    }
+
+    .filter-btn:hover {
+      color: white;
+      background: rgba(255, 255, 255, 0.18);
+      transform: translateX(8px) scale(1.03);
+      text-shadow: 0 0 14px rgba(255, 255, 255, 0.3);
     }
 
     .reset-btn {
       color: rgba(255, 255, 255, 0.72);
     }
 
-    .reset-btn:hover,
-    .filter-btn:hover {
+    .reset-btn:hover {
       color: white;
       border-color: var(--line-strong);
+      background: rgba(255, 255, 255, 0.075);
     }
 
     .roadmap {
       padding: 18px;
+      min-height: 620px;
+      overflow: hidden;
     }
 
     .roadmap-head {
@@ -554,6 +596,40 @@
       display: grid;
       gap: 12px;
       padding-top: 18px;
+      padding-right: 4px;
+      max-height: 530px;
+      overflow-y: auto;
+      animation: tab-screen-in 260ms ease-out;
+    }
+
+    .timeline::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .timeline::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.025);
+      border-radius: 999px;
+    }
+
+    .timeline::-webkit-scrollbar-thumb {
+      background: rgba(176, 140, 255, 0.34);
+      border-radius: 999px;
+    }
+
+    .timeline::-webkit-scrollbar-thumb:hover {
+      background: rgba(176, 140, 255, 0.62);
+    }
+
+    @keyframes tab-screen-in {
+      from {
+        opacity: 0;
+        transform: translateX(24px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
 
     .timeline::before {
@@ -785,6 +861,235 @@
       background: rgba(255, 255, 255, 0.04);
     }
 
+    .profile-summary {
+      display: grid;
+      gap: 10px;
+    }
+
+    .profile-summary strong {
+      color: white;
+      font-size: 2rem;
+      line-height: 0.95;
+      letter-spacing: 0;
+      text-shadow: 0 0 26px rgba(255, 255, 255, 0.22);
+    }
+
+    .profile-summary p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.8rem;
+      line-height: 1.5;
+      font-weight: 640;
+    }
+
+    .portfolio-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .portfolio-content {
+      min-height: 0;
+      padding-top: 18px;
+      overflow-y: auto;
+      animation: tab-screen-in 260ms ease-out;
+    }
+
+    .portfolio-content::-webkit-scrollbar,
+    .course-board::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    .portfolio-content::-webkit-scrollbar-track,
+    .course-board::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.025);
+      border-radius: 999px;
+    }
+
+    .portfolio-content::-webkit-scrollbar-thumb,
+    .course-board::-webkit-scrollbar-thumb {
+      background: rgba(176, 140, 255, 0.34);
+      border-radius: 999px;
+    }
+
+    .portfolio-screen {
+      display: grid;
+      gap: 16px;
+    }
+
+    .lead-copy {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.95rem;
+      line-height: 1.65;
+      font-weight: 640;
+      max-width: 760px;
+    }
+
+    .feature-grid,
+    .skill-grid,
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .feature-card,
+    .skill-card,
+    .project-card {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.035)),
+        rgba(8, 8, 10, 0.72);
+      padding: 14px;
+    }
+
+    .feature-card span,
+    .skill-card span,
+    .project-card span {
+      display: block;
+      color: var(--violet);
+      font-size: 0.68rem;
+      font-weight: 850;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .feature-card h3,
+    .skill-card h3,
+    .project-card h3 {
+      margin: 0 0 8px;
+      color: white;
+      font-size: 1rem;
+      line-height: 1.25;
+    }
+
+    .feature-card p,
+    .skill-card p,
+    .project-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.5;
+      font-weight: 620;
+    }
+
+    .stack-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .stack-cloud span {
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.055);
+      color: rgba(255, 255, 255, 0.78);
+      padding: 7px 10px;
+      font-size: 0.72rem;
+      font-weight: 780;
+    }
+
+    .course-board {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(0, 0, 0, 0.22);
+    }
+
+    .course-table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    .course-table th,
+    .course-table td {
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      padding: 12px;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .course-table th {
+      color: white;
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .course-table th:first-child,
+    .course-row-title {
+      width: 190px;
+      background: rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 0.78rem;
+      font-weight: 850;
+      line-height: 1.4;
+    }
+
+    .course-table td {
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 0.78rem;
+      line-height: 1.45;
+      font-weight: 620;
+    }
+
+    .course-table ul {
+      margin: 0;
+      padding-left: 16px;
+    }
+
+    .course-table li + li {
+      margin-top: 5px;
+    }
+
+    .course-year-1 {
+      background: rgba(176, 140, 255, 0.16);
+    }
+
+    .course-year-2 {
+      background: rgba(255, 91, 214, 0.15);
+    }
+
+    .course-year-3 {
+      background: rgba(89, 146, 255, 0.16);
+    }
+
+    .course-year-4 {
+      background: rgba(111, 223, 113, 0.14);
+    }
+
+    .course-year-after {
+      background: rgba(42, 219, 228, 0.15);
+    }
+
+    .course-table th.course-year-1 {
+      background: #9400ff;
+    }
+
+    .course-table th.course-year-2 {
+      background: #ec00c6;
+    }
+
+    .course-table th.course-year-3 {
+      background: #3b7ddd;
+    }
+
+    .course-table th.course-year-4 {
+      background: #00d53a;
+    }
+
+    .course-table th.course-year-after {
+      background: #00cfd7;
+    }
+
     @media (max-width: 900px) {
       .shell {
         width: min(100% - 28px, 760px);
@@ -804,11 +1109,25 @@
       }
 
       .filters {
-        grid-template-columns: repeat(3, 1fr);
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .stage-tabs-list {
+        grid-column: 1 / -1;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .filter-btn:hover {
+        transform: none;
       }
 
       .reset-btn {
         grid-column: 1 / -1;
+      }
+
+      .portfolio-content {
+        max-height: none;
       }
     }
 
@@ -834,8 +1153,32 @@
         grid-template-columns: 1fr;
       }
 
+      .feature-grid,
+      .skill-grid,
+      .project-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .profile-summary strong {
+        font-size: 1.65rem;
+      }
+
+      .course-table {
+        min-width: 760px;
+      }
+
+      .course-table th:first-child,
+      .course-row-title {
+        width: 150px;
+      }
+
+      .stage-tabs-list {
+        grid-template-columns: 1fr;
+      }
+
       .roadmap {
         padding: 12px;
+        min-height: auto;
       }
 
       .roadmap-head {
@@ -845,6 +1188,12 @@
 
       .timeline::before {
         left: 18px;
+      }
+
+      .timeline {
+        max-height: none;
+        overflow: visible;
+        padding-right: 0;
       }
 
       .stage {
@@ -892,17 +1241,17 @@
   <main class="shell">
     <section class="hero" aria-label="профиль">
       <div class="avatar">
-        <img src="assets/avatar-main.jpg" alt="Аватар дорожной карты">
+        <img src="assets/avatar-main.jpg" alt="Аватар full-stack разработчика">
       </div>
-      <h1 class="title">Дорожная карта</h1>
-      <p class="subtitle">сейчас прокачиваем фронтенд-дисциплину</p>
+      <h1 class="title">Full-stack разработчик</h1>
+      <p class="subtitle">портфолио, навыки и рост по курсам</p>
       <div class="profile-card">
         <div class="mini-avatar">
           <img src="assets/mini-card.jpg" alt="Миниатюра профиля">
         </div>
         <div class="profile-copy">
-          <strong>личная дорожная карта</strong>
-          <span id="statusLine">0 / 15 задач выполнено</span>
+          <strong>личный профиль разработчика</strong>
+          <span id="statusLine">1 курс: собираю базу full-stack</span>
         </div>
         <div class="verify">✓</div>
       </div>
@@ -914,195 +1263,142 @@
         <span>CSS</span>
         <span>JS</span>
         <span>React</span>
+        <span>Node</span>
+        <span>SQL</span>
       </div>
     </section>
 
     <section class="dashboard">
-      <aside class="side-panel" aria-label="управление прогрессом">
-        <div>
-          <span class="eyebrow">общий прогресс</span>
-          <div class="progress-value">
-            <strong id="globalPercent">0%</strong>
-            <span id="taskCounter">0 / 15</span>
-          </div>
-          <div class="bar" aria-hidden="true">
-            <i id="progressBar" style="--progress: 0%"></i>
-          </div>
+      <aside class="side-panel" aria-label="навигация портфолио">
+        <div class="profile-summary">
+          <span class="eyebrow">профиль</span>
+          <strong>Full-stack</strong>
+          <p>Разрабатываю интерфейсы, серверную логику и базы данных. Цель — выйти из колледжа с сильным портфолио и реальным коммерческим стеком.</p>
         </div>
 
         <div class="stats-grid">
           <div class="stat">
-            <span>этапы</span>
-            <strong id="stageCounter">5</strong>
+            <span>курс</span>
+            <strong id="courseLabel">1</strong>
           </div>
           <div class="stat">
             <span>фокус</span>
-            <strong id="focusLabel">основа</strong>
+            <strong id="focusLabel">base</strong>
           </div>
         </div>
 
-        <div class="filters" id="filterContainer">
-          <button class="filter-btn active" data-filter="all">все этапы</button>
-          <button class="filter-btn" data-filter="completed">завершено</button>
-          <button class="filter-btn" data-filter="incomplete">в работе</button>
-          <button class="reset-btn" id="resetAllBtn">сбросить прогресс <span>×</span></button>
+        <div class="filters stage-tabs" id="tabContainer" role="tablist" aria-label="вкладки портфолио">
+          <button class="filter-btn stage-tab active" type="button" data-tab="about" role="tab" aria-selected="true">
+            <span>обо мне</span>
+            <small>01</small>
+          </button>
+          <button class="filter-btn stage-tab" type="button" data-tab="skills" role="tab" aria-selected="false">
+            <span>что я умею</span>
+            <small>02</small>
+          </button>
+          <button class="filter-btn stage-tab" type="button" data-tab="courses" role="tab" aria-selected="false">
+            <span>по курсам</span>
+            <small>03</small>
+          </button>
+          <button class="filter-btn stage-tab" type="button" data-tab="projects" role="tab" aria-selected="false">
+            <span>проекты</span>
+            <small>04</small>
+          </button>
         </div>
       </aside>
 
-      <section class="roadmap" aria-label="список дорожной карты">
+      <section class="roadmap portfolio-panel" aria-label="портфолио full-stack разработчика">
         <div class="roadmap-head">
           <div>
-            <span class="eyebrow">порядок прохождения</span>
-            <h2>Индивидуальная дорожная карта</h2>
+            <span class="eyebrow" id="sectionKicker">личный профиль</span>
+            <h2 id="sectionTitle">Обо мне</h2>
           </div>
-          <div class="ghost-tag" id="activeFilterLabel">все этапы</div>
+          <div class="ghost-tag" id="activeFilterLabel">full-stack</div>
         </div>
-        <div class="timeline" id="timelineRoot"></div>
+        <div class="portfolio-content" id="contentRoot"></div>
       </section>
     </section>
   </main>
 
   <script>
-    const roadmapData = [
+    const portfolioTabs = [
+      { id: "about", title: "Обо мне", kicker: "личный профиль", badge: "full-stack", course: "1", focus: "base", status: "1 курс: собираю базу full-stack" },
+      { id: "skills", title: "Что я умею", kicker: "технические навыки", badge: "frontend + backend", course: "1", focus: "stack", status: "умею делать интерфейсы и серверную часть" },
+      { id: "courses", title: "Рост по курсам", kicker: "план практики", badge: "1-4 курс", course: "1-4", focus: "growth", status: "путь от базы до full-stack продукта" },
+      { id: "projects", title: "Проекты", kicker: "портфолио", badge: "production", course: "4", focus: "release", status: "готовлю проекты для портфолио и резюме" }
+    ];
+
+    const courseColumns = [
+      { key: "year1", title: "1 курс", className: "course-year-1" },
+      { key: "year2", title: "2 курс", className: "course-year-2" },
+      { key: "year3", title: "3 курс", className: "course-year-3" },
+      { key: "year4", title: "4 курс", className: "course-year-4" },
+      { key: "after", title: "После выпуска", className: "course-year-after" }
+    ];
+
+    const courseRows = [
       {
-        id: 1,
-        name: "Фундамент",
-        icon: "01",
-        focus: "основа",
-        tasks: [
-          { id: "t1", text: "Изучить основы HTML5 и семантическую вёрстку", completed: false, meta: "1 неделя", note: "Пояснение: задача проверяет базу HTML5 — структуру документа, смысловые теги, доступность и SEO-логику. Важно, чтобы ученик понимал назначение элементов, а не просто собирал страницу из div." },
-          { id: "t2", text: "Освоить CSS3: Flexbox, Grid, адаптивность", completed: false, meta: "2 недели", note: "Пояснение: здесь отрабатывается визуальная база фронтенда — раскладка через Flexbox и Grid, брейкпоинты, резиновая ширина и контроль переполнений на мобильных экранах." },
-          { id: "t3", text: "Понять базовый JavaScript: переменные, функции, DOM", completed: false, meta: "2 недели", note: "Пояснение: задача про фундамент JS — типы данных, функции, условия, события и работу с DOM. Цель — чтобы ученик мог оживить интерфейс без фреймворков." }
-        ]
+        title: "Место практики и должность",
+        cells: {
+          year1: ["UX/UI designer", "Junior frontend trainee"],
+          year2: ["Web-студия", "Frontend / Backend intern"],
+          year3: ["IT-отдел компании", "Full-stack developer junior"],
+          year4: ["Команда продукта", "Full-stack developer"],
+          after: ["Коммерческая разработка", "Full-stack engineer"]
+        }
       },
       {
-        id: 2,
-        name: "Продвинутый JS",
-        icon: "02",
-        focus: "асинхронность",
-        tasks: [
-          { id: "t4", text: "Изучить асинхронность: Promise, async/await", completed: false, meta: "1.5 нед", note: "Пояснение: ученик должен понимать event loop на практическом уровне, цепочки Promise, async/await и отличие последовательного выполнения от параллельных запросов." },
-          { id: "t5", text: "Работа с API, fetch, обработка ошибок", completed: false, meta: "1 неделя", note: "Пояснение: задача закрепляет клиент-серверное мышление — HTTP-запросы, JSON, статусы ответа, loading/error состояния и аккуратную обработку неуспешных сценариев." },
-          { id: "t6", text: "Модули, замыкания, прототипы", completed: false, meta: "1.5 нед", note: "Пояснение: здесь проверяются внутренние механики JavaScript: область видимости, замыкания, import/export, прототипное наследование и организация кода по модулям." }
-        ]
+        title: "Функциональные обязанности",
+        cells: {
+          year1: ["Создание каркаса сайта", "Подбор шрифтов и цветов", "Верстка простых страниц"],
+          year2: ["Интерактивные страницы", "Подключение API", "Работа с формами и валидацией"],
+          year3: ["REST API", "Авторизация", "База данных", "Интеграция фронта и бэка"],
+          year4: ["Архитектура приложения", "Деплой", "Оптимизация", "Командная разработка"],
+          after: ["Разработка продукта", "Поддержка production", "Работа с задачами бизнеса"]
+        }
       },
       {
-        id: 3,
-        name: "Экосистема React",
-        icon: "03",
-        focus: "React",
-        tasks: [
-          { id: "t7", text: "Компоненты, props, состояние (useState)", completed: false, meta: "1.5 нед", note: "Пояснение: задача вводит компонентное мышление React — декомпозицию интерфейса, передачу данных через props и локальное состояние через useState." },
-          { id: "t8", text: "Эффекты, контекст и хуки (useEffect, useContext)", completed: false, meta: "2 недели", note: "Пояснение: ученик учится работать с жизненным циклом через useEffect, выносить общие данные в контекст и не путать вычисления, эффекты и состояние." },
-          { id: "t9", text: "Маршрутизация React Router + управление состоянием", completed: false, meta: "2 недели", note: "Пояснение: задача проверяет навигацию SPA, вложенные маршруты, параметры URL и базовую архитектуру состояния между страницами приложения." }
-        ]
+        title: "Навыки, которыми обладаю",
+        cells: {
+          year1: ["Самопрезентация", "HTML/CSS база", "Генерация картинок с помощью ИИ", "Понимание структуры сайта"],
+          year2: ["JavaScript", "Git", "Адаптивная верстка", "Базовый React"],
+          year3: ["Node.js", "Express", "SQL", "JWT", "Работа с API"],
+          year4: ["TypeScript", "Docker", "CI/CD", "Проектирование модулей"],
+          after: ["Full-stack мышление", "Ответственность за фичу целиком", "Работа в команде"]
+        }
       },
       {
-        id: 4,
-        name: "Инструменты и DevOps",
-        icon: "04",
-        focus: "инструменты",
-        tasks: [
-          { id: "t10", text: "Git и GitHub: ветвление, PR, совместный процесс", completed: false, meta: "1 неделя", note: "Пояснение: задача про рабочий процесс разработчика — ветки, коммиты, pull request, ревью и понимание того, как не ломать общий main." },
-          { id: "t11", text: "Основы CI/CD и деплой (Vercel, Netlify)", completed: false, meta: "5 дней", note: "Пояснение: ученик должен понять путь кода до продакшена: build, проверки, переменные окружения, автоматический деплой и чтение логов сборки." },
-          { id: "t12", text: "Webpack/Vite базовая настройка", completed: false, meta: "5 дней", note: "Пояснение: задача раскрывает сборку проекта — dev server, entry point, обработку ассетов, npm scripts и разницу между разработческой и production-сборкой." }
-        ]
+        title: "Навыки, которые получу",
+        cells: {
+          year1: ["Создание прототипа сайта", "Работа в команде", "Базовый UI"],
+          year2: ["React-компоненты", "Асинхронность", "Работа с внешними сервисами"],
+          year3: ["Проектирование БД", "Backend-архитектура", "Безопасность API"],
+          year4: ["Микросервисы на базовом уровне", "Тестирование", "Мониторинг", "DevOps-процессы"],
+          after: ["Middle-ready стек", "Коммерческая самостоятельность", "Сильное портфолио"]
+        }
       },
       {
-        id: 5,
-        name: "Финальный проект",
-        icon: "05",
-        focus: "релиз",
-        tasks: [
-          { id: "t13", text: "Разработка полноценного SPA приложения", completed: false, meta: "3 недели", note: "Пояснение: финальная сборка навыков в одном проекте — структура приложения, страницы, состояние, API, адаптивная верстка и доведение интерфейса до рабочего состояния." },
-          { id: "t14", text: "Тестирование (Jest, React Testing Library)", completed: false, meta: "1.5 нед", note: "Пояснение: задача формирует привычку проверять поведение кода: unit-тесты, пользовательские сценарии, мок API и защита ключевых функций от регрессий." },
-          { id: "t15", text: "Портфолио и презентация проекта", completed: false, meta: "1 неделя", note: "Пояснение: ученик оформляет результат как публичный кейс: описание задачи, стек, демонстрация, ссылка на репозиторий и понятная защита принятых решений." }
-        ]
+        title: "Как я получу эти навыки",
+        cells: {
+          year1: ["Выполняя реальные макеты", "Работая в команде", "Проходя онлайн-курсы"],
+          year2: ["Делая SPA-проекты", "Разбирая чужой код", "Подключая реальные API"],
+          year3: ["Собирая full-stack приложения", "Проектируя схемы данных", "Пиша API"],
+          year4: ["Защищая дипломный продукт", "Деплоя проект", "Участвуя в ревью"],
+          after: ["Работая на реальных задачах", "Собирая кейсы", "Прокачивая английский и архитектуру"]
+        }
       }
     ];
 
-    let currentData = [];
-    let currentFilter = "all";
+    let currentTab = "about";
 
-    const storageKey = "individualRoadmapProgress";
-    const timelineRoot = document.getElementById("timelineRoot");
-    const globalPercent = document.getElementById("globalPercent");
-    const taskCounter = document.getElementById("taskCounter");
-    const statusLine = document.getElementById("statusLine");
-    const progressBar = document.getElementById("progressBar");
-    const focusLabel = document.getElementById("focusLabel");
+    const contentRoot = document.getElementById("contentRoot");
+    const tabContainer = document.getElementById("tabContainer");
+    const sectionKicker = document.getElementById("sectionKicker");
+    const sectionTitle = document.getElementById("sectionTitle");
     const activeFilterLabel = document.getElementById("activeFilterLabel");
-
-    function loadProgress() {
-      const saved = localStorage.getItem(storageKey);
-      if (saved) {
-        try {
-          const savedTasks = JSON.parse(saved);
-          for (const stage of roadmapData) {
-            for (const task of stage.tasks) {
-              task.completed = savedTasks[task.id] === true;
-            }
-          }
-        } catch (error) {
-          localStorage.removeItem(storageKey);
-        }
-      }
-      currentData = JSON.parse(JSON.stringify(roadmapData));
-    }
-
-    function saveProgress() {
-      const progressMap = {};
-      for (const stage of currentData) {
-        for (const task of stage.tasks) {
-          progressMap[task.id] = task.completed;
-        }
-      }
-      localStorage.setItem(storageKey, JSON.stringify(progressMap));
-    }
-
-    function getStageProgress(stage) {
-      if (!stage.tasks.length) return 1;
-      return stage.tasks.filter((task) => task.completed).length / stage.tasks.length;
-    }
-
-    function getStageStatus(stage) {
-      const progress = getStageProgress(stage);
-      if (progress === 1) return "completed";
-      if (progress > 0) return "partial";
-      return "default";
-    }
-
-    function getGlobalStats() {
-      let total = 0;
-      let done = 0;
-      for (const stage of currentData) {
-        total += stage.tasks.length;
-        done += stage.tasks.filter((task) => task.completed).length;
-      }
-      return {
-        total,
-        done,
-        percent: total === 0 ? 0 : Math.round((done / total) * 100)
-      };
-    }
-
-    function updateStatsUI() {
-      const stats = getGlobalStats();
-      const activeStage = currentData.find((stage) => getStageProgress(stage) < 1) || currentData[currentData.length - 1];
-      globalPercent.textContent = `${stats.percent}%`;
-      taskCounter.textContent = `${stats.done} / ${stats.total}`;
-      statusLine.textContent = `${stats.done} / ${stats.total} задач выполнено`;
-      progressBar.style.setProperty("--progress", `${stats.percent}%`);
-      focusLabel.textContent = activeStage ? activeStage.focus : "готово";
-      activeFilterLabel.textContent = currentFilter === "all" ? "все этапы" : currentFilter === "completed" ? "завершено" : "в работе";
-    }
-
-    function shouldShowStage(stage, filter) {
-      const progress = getStageProgress(stage);
-      if (filter === "completed") return progress === 1;
-      if (filter === "incomplete") return progress < 1;
-      return true;
-    }
+    const courseLabel = document.getElementById("courseLabel");
+    const focusLabel = document.getElementById("focusLabel");
+    const statusLine = document.getElementById("statusLine");
 
     function escapeHtml(value) {
       return String(value).replace(/[&<>"]/g, (char) => ({
@@ -1113,99 +1409,129 @@
       }[char]));
     }
 
-    function renderTimeline(filter) {
-      const filteredStages = currentData.filter((stage) => shouldShowStage(stage, filter));
+    function renderCards(cards, className) {
+      return cards.map((card) => `
+        <article class="${className}">
+          <span>${escapeHtml(card.label)}</span>
+          <h3>${escapeHtml(card.title)}</h3>
+          <p>${escapeHtml(card.text)}</p>
+        </article>
+      `).join("");
+    }
 
-      if (!filteredStages.length) {
-        timelineRoot.innerHTML = '<div class="empty">по этому фильтру этапов нет</div>';
-        return;
-      }
+    function renderCell(items) {
+      return `<ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
+    }
 
-      timelineRoot.innerHTML = filteredStages.map((stage) => {
-        const progress = getStageProgress(stage);
-        const status = getStageStatus(stage);
-        const done = stage.tasks.filter((task) => task.completed).length;
-        const total = stage.tasks.length;
-        const taskHtml = stage.tasks.map((task) => `
-          <div class="task-block ${task.completed ? "done" : ""}" data-task-id="${escapeHtml(task.id)}">
-            <button class="teacher-chip" type="button" data-note-target="${escapeHtml(task.id)}" aria-expanded="false" aria-controls="note-${escapeHtml(task.id)}" aria-label="Пояснение к задаче" title="Пояснение к задаче">!</button>
-            <p class="task-note" id="note-${escapeHtml(task.id)}" hidden>${escapeHtml(task.note)}</p>
-            <div class="task ${task.completed ? "done" : ""}">
-              <input id="${escapeHtml(task.id)}" type="checkbox" ${task.completed ? "checked" : ""} data-id="${escapeHtml(task.id)}">
-              <label for="${escapeHtml(task.id)}">${escapeHtml(task.text)}</label>
-              <span class="meta">${escapeHtml(task.meta)}</span>
-            </div>
+    function renderAbout() {
+      const cards = [
+        { label: "роль", title: "Full-stack разработчик", text: "Мне интересно закрывать задачу целиком: от интерфейса и пользовательского сценария до API, базы данных и деплоя." },
+        { label: "цель", title: "Вырасти в сильного инженера", text: "На каждом курсе хочу добавлять новый слой: дизайн и верстка, frontend, backend, архитектура, production." },
+        { label: "подход", title: "Практика важнее теории", text: "Лучше один рабочий проект с нормальным кодом, чем десять недоделанных страниц без логики." },
+        { label: "фокус", title: "Коммерческий стек", text: "React, Node.js, TypeScript, SQL, Git, Docker, API, тесты и понятная презентация результата." }
+      ];
+
+      return `
+        <section class="portfolio-screen">
+          <p class="lead-copy">Я full-stack разработчик в процессе прокачки: собираю сайты, учусь делать удобные интерфейсы, писать серверную логику, хранить данные и доводить проект до состояния, которое можно показать работодателю.</p>
+          <div class="feature-grid">${renderCards(cards, "feature-card")}</div>
+        </section>
+      `;
+    }
+
+    function renderSkills() {
+      const skills = [
+        { label: "frontend", title: "Интерфейсы", text: "HTML, CSS, адаптивная верстка, JavaScript, React, компоненты, работа с состоянием и API." },
+        { label: "backend", title: "Серверная часть", text: "Node.js, Express, REST API, авторизация, обработка ошибок и структура backend-проекта." },
+        { label: "database", title: "Данные", text: "SQL, базовое проектирование таблиц, связи, CRUD-операции и понимание клиент-серверной логики." },
+        { label: "tools", title: "Инструменты", text: "Git, GitHub, Vite, npm, деплой, базовый Docker и аккуратная работа с задачами." }
+      ];
+      const stack = ["HTML", "CSS", "JavaScript", "TypeScript", "React", "Node.js", "Express", "SQL", "REST API", "Git", "Docker", "Figma"];
+
+      return `
+        <section class="portfolio-screen">
+          <p class="lead-copy">Мой стек строится вокруг полного цикла разработки: придумать интерфейс, сверстать, оживить, подключить сервер, сохранить данные и развернуть проект.</p>
+          <div class="stack-cloud">${stack.map((item) => `<span>${escapeHtml(item)}</span>`).join("")}</div>
+          <div class="skill-grid">${renderCards(skills, "skill-card")}</div>
+        </section>
+      `;
+    }
+
+    function renderCourses() {
+      const head = courseColumns.map((column) => `<th class="${column.className}">${escapeHtml(column.title)}</th>`).join("");
+      const rows = courseRows.map((row) => `
+        <tr>
+          <th class="course-row-title">${escapeHtml(row.title)}</th>
+          ${courseColumns.map((column) => `<td class="${column.className}">${renderCell(row.cells[column.key])}</td>`).join("")}
+        </tr>
+      `).join("");
+
+      return `
+        <section class="portfolio-screen">
+          <p class="lead-copy">Вот эта часть сделана по логике скриншота: что я делаю и какие навыки набираю на каждом курсе, чтобы к выпуску быть не просто “студентом с сайтом”, а full-stack разработчиком с понятным ростом.</p>
+          <div class="course-board">
+            <table class="course-table">
+              <thead>
+                <tr>
+                  <th></th>
+                  ${head}
+                </tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>
           </div>
-        `).join("");
-
-        return `
-          <article class="stage ${status}" data-stage-id="${stage.id}">
-            <div class="marker"><i>${escapeHtml(stage.icon)}</i></div>
-            <div class="stage-card">
-              <div class="stage-main">
-                <div>
-                  <h3>${escapeHtml(stage.name)}</h3>
-                  <small>${done}/${total} задач выполнено</small>
-                </div>
-                <div class="stage-percent">${Math.round(progress * 100)}%</div>
-              </div>
-              <div class="tasks">${taskHtml}</div>
-            </div>
-          </article>
-        `;
-      }).join("");
-
-      timelineRoot.querySelectorAll("input[type='checkbox']").forEach((checkbox) => {
-        checkbox.addEventListener("change", () => {
-          toggleTask(checkbox.dataset.id, checkbox.checked);
-        });
-      });
-
-      timelineRoot.querySelectorAll(".teacher-chip").forEach((button) => {
-        button.addEventListener("click", () => {
-          const taskBlock = button.closest(".task-block");
-          const note = taskBlock.querySelector(".task-note");
-          const shouldOpen = note.hidden;
-          note.hidden = !shouldOpen;
-          taskBlock.classList.toggle("open-note", shouldOpen);
-          button.setAttribute("aria-expanded", String(shouldOpen));
-        });
-      });
+        </section>
+      `;
     }
 
-    function toggleTask(taskId, completed) {
-      for (const stage of currentData) {
-        const task = stage.tasks.find((item) => item.id === taskId);
-        if (task) {
-          task.completed = completed;
-          saveProgress();
-          updateStatsUI();
-          renderTimeline(currentFilter);
-          return;
-        }
-      }
+    function renderProjects() {
+      const projects = [
+        { label: "portfolio", title: "Личное портфолио", text: "Сайт с вкладками, описанием навыков, планом по курсам и визуальным стилем под игровое меню." },
+        { label: "spa", title: "Full-stack SPA", text: "Приложение на React с авторизацией, личным кабинетом, API и сохранением данных в базе." },
+        { label: "api", title: "REST API сервис", text: "Backend на Node.js/Express: маршруты, контроллеры, валидация, база данных и документация." },
+        { label: "final", title: "Выпускной продукт", text: "Итоговый проект, который можно защитить, задеплоить и добавить в резюме как полноценный кейс." }
+      ];
+
+      return `
+        <section class="portfolio-screen">
+          <p class="lead-copy">Проекты нужны не для галочки, а чтобы показать: я могу взять идею, собрать интерфейс, написать логику и объяснить, как всё работает.</p>
+          <div class="project-grid">${renderCards(projects, "project-card")}</div>
+        </section>
+      `;
     }
 
-    function resetAllProgress() {
-      for (const stage of currentData) {
-        for (const task of stage.tasks) {
-          task.completed = false;
-        }
-      }
-      saveProgress();
-      updateStatsUI();
-      renderTimeline(currentFilter);
-    }
+    function renderCurrentTab() {
+      const tab = portfolioTabs.find((item) => item.id === currentTab) || portfolioTabs[0];
+      sectionKicker.textContent = tab.kicker;
+      sectionTitle.textContent = tab.title;
+      activeFilterLabel.textContent = tab.badge;
+      courseLabel.textContent = tab.course;
+      focusLabel.textContent = tab.focus;
+      statusLine.textContent = tab.status;
 
-    function initFilters() {
       document.querySelectorAll(".filter-btn").forEach((button) => {
-        button.addEventListener("click", () => {
-          currentFilter = button.dataset.filter;
-          document.querySelectorAll(".filter-btn").forEach((item) => item.classList.remove("active"));
-          button.classList.add("active");
-          updateStatsUI();
-          renderTimeline(currentFilter);
-        });
+        const isActive = button.dataset.tab === tab.id;
+        button.classList.toggle("active", isActive);
+        button.setAttribute("aria-selected", String(isActive));
+      });
+
+      if (tab.id === "skills") {
+        contentRoot.innerHTML = renderSkills();
+      } else if (tab.id === "courses") {
+        contentRoot.innerHTML = renderCourses();
+      } else if (tab.id === "projects") {
+        contentRoot.innerHTML = renderProjects();
+      } else {
+        contentRoot.innerHTML = renderAbout();
+      }
+    }
+
+    function initTabs() {
+      tabContainer.addEventListener("click", (event) => {
+        const button = event.target.closest(".filter-btn");
+        if (!button || !tabContainer.contains(button)) return;
+        currentTab = button.dataset.tab;
+        renderCurrentTab();
       });
     }
 
@@ -1225,12 +1551,8 @@
       snow.append(...flakes);
     }
 
-    document.getElementById("resetAllBtn").addEventListener("click", resetAllProgress);
-
-    loadProgress();
-    updateStatsUI();
-    renderTimeline(currentFilter);
-    initFilters();
+    renderCurrentTab();
+    initTabs();
     initSnow();
   </script>
 </body>
