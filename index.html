@@ -32,6 +32,10 @@
       min-height: 100%;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
       overflow-x: hidden;
@@ -41,6 +45,13 @@
       letter-spacing: 0;
       -webkit-font-smoothing: antialiased;
       text-rendering: geometricPrecision;
+    }
+
+    @media (pointer: fine) {
+      body.cursor-ready,
+      body.cursor-ready * {
+        cursor: none;
+      }
     }
 
     button,
@@ -310,8 +321,8 @@
 
     .hero-image-card {
       position: relative;
-      width: min(360px, 100%);
-      height: 112px;
+      width: min(356px, 100%);
+      height: 104px;
       margin-top: 16px;
       overflow: hidden;
       border-radius: var(--radius);
@@ -331,8 +342,57 @@
     }
 
     .hero-image-card img {
-      object-position: center 28%;
-      filter: grayscale(0.62) contrast(1.04) brightness(0.74);
+      object-position: center;
+      filter: contrast(1.04) brightness(0.84);
+    }
+
+    .cursor-dot {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 9999;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(176, 140, 255, 0.95);
+      box-shadow:
+        0 0 12px rgba(176, 140, 255, 0.88),
+        0 0 30px rgba(176, 140, 255, 0.42);
+      opacity: 0;
+      pointer-events: none;
+      transform: translate3d(-50%, -50%, 0);
+      transition:
+        opacity 140ms ease,
+        width 160ms ease,
+        height 160ms ease,
+        background 160ms ease,
+        box-shadow 160ms ease;
+      will-change: transform;
+    }
+
+    .cursor-dot.active {
+      opacity: 1;
+    }
+
+    .cursor-dot.link {
+      width: 12px;
+      height: 12px;
+      background: white;
+      box-shadow:
+        0 0 14px rgba(255, 255, 255, 0.9),
+        0 0 34px rgba(176, 140, 255, 0.5);
+    }
+
+    .cursor-dot.press {
+      width: 6px;
+      height: 6px;
+      background: rgba(176, 140, 255, 1);
+    }
+
+    @media (pointer: coarse) {
+      .cursor-dot {
+        display: none;
+      }
     }
 
     .socials {
@@ -452,6 +512,8 @@
       color: white;
       font-size: 1.25rem;
       line-height: 1;
+      overflow-wrap: anywhere;
+      transition: color 220ms ease, text-shadow 220ms ease, transform 220ms ease;
     }
 
     .filters {
@@ -892,22 +954,26 @@
       padding-top: 18px;
       overflow-y: auto;
       animation: tab-screen-in 260ms ease-out;
+      transition: opacity 220ms ease, transform 220ms ease, filter 220ms ease;
     }
 
-    .portfolio-content::-webkit-scrollbar,
-    .course-board::-webkit-scrollbar {
+    .portfolio-content.is-switching {
+      opacity: 0;
+      transform: translateY(10px);
+      filter: blur(2px);
+    }
+
+    .portfolio-content::-webkit-scrollbar {
       width: 6px;
       height: 6px;
     }
 
-    .portfolio-content::-webkit-scrollbar-track,
-    .course-board::-webkit-scrollbar-track {
+    .portfolio-content::-webkit-scrollbar-track {
       background: rgba(255, 255, 255, 0.025);
       border-radius: 999px;
     }
 
-    .portfolio-content::-webkit-scrollbar-thumb,
-    .course-board::-webkit-scrollbar-thumb {
+    .portfolio-content::-webkit-scrollbar-thumb {
       background: rgba(176, 140, 255, 0.34);
       border-radius: 999px;
     }
@@ -915,6 +981,7 @@
     .portfolio-screen {
       display: grid;
       gap: 16px;
+      animation: portfolio-screen-in 420ms cubic-bezier(0.22, 0.8, 0.22, 1);
     }
 
     .lead-copy {
@@ -944,6 +1011,41 @@
         linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.035)),
         rgba(8, 8, 10, 0.72);
       padding: 14px;
+      animation: card-fade-in 420ms ease both;
+      transition:
+        transform 180ms ease,
+        border-color 180ms ease,
+        background 180ms ease,
+        box-shadow 180ms ease;
+    }
+
+    .feature-card:nth-child(2),
+    .skill-card:nth-child(2),
+    .project-card:nth-child(2) {
+      animation-delay: 45ms;
+    }
+
+    .feature-card:nth-child(3),
+    .skill-card:nth-child(3),
+    .project-card:nth-child(3) {
+      animation-delay: 90ms;
+    }
+
+    .feature-card:nth-child(4),
+    .skill-card:nth-child(4),
+    .project-card:nth-child(4) {
+      animation-delay: 135ms;
+    }
+
+    .feature-card:hover,
+    .skill-card:hover,
+    .project-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(176, 140, 255, 0.34);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.045)),
+        rgba(10, 10, 12, 0.78);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
     }
 
     .feature-card span,
@@ -993,101 +1095,187 @@
       font-weight: 780;
     }
 
-    .course-board {
-      overflow: auto;
+    .course-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      padding-bottom: 2px;
+    }
+
+    .course-tab {
+      min-height: 42px;
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      background: rgba(0, 0, 0, 0.22);
+      background: rgba(255, 255, 255, 0.045);
+      color: var(--muted);
+      cursor: pointer;
+      padding: 0 12px;
+      font-size: 0.78rem;
+      font-weight: 850;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      transition:
+        transform 180ms ease,
+        color 160ms ease,
+        border-color 160ms ease,
+        background 160ms ease,
+        box-shadow 160ms ease;
     }
 
-    .course-table {
-      width: 100%;
-      min-width: 760px;
-      border-collapse: collapse;
-      table-layout: fixed;
-    }
-
-    .course-table th,
-    .course-table td {
-      border: 1px solid rgba(255, 255, 255, 0.13);
-      padding: 12px;
-      vertical-align: top;
-      text-align: left;
-    }
-
-    .course-table th {
+    .course-tab:hover {
       color: white;
-      font-size: 0.82rem;
-      font-weight: 900;
-      letter-spacing: 0.02em;
-      text-align: center;
+      border-color: var(--line-strong);
+      transform: translateY(-2px);
+    }
+
+    .course-tab.active {
+      color: white;
+      border-color: var(--course-color);
+      background: color-mix(in srgb, var(--course-color) 18%, rgba(255, 255, 255, 0.055));
+      box-shadow: 0 0 24px color-mix(in srgb, var(--course-color) 26%, transparent);
+    }
+
+    .course-detail {
+      --course-color: var(--violet);
+      display: grid;
+      gap: 14px;
+      animation: course-scroll-in 360ms cubic-bezier(0.22, 0.8, 0.22, 1);
+      scroll-margin-top: 14px;
+    }
+
+    .course-stage-head {
+      border: 1px solid color-mix(in srgb, var(--course-color) 32%, rgba(255, 255, 255, 0.12));
+      border-radius: var(--radius);
+      background:
+        linear-gradient(135deg, color-mix(in srgb, var(--course-color) 18%, transparent), rgba(255, 255, 255, 0.025) 54%),
+        rgba(8, 8, 10, 0.72);
+      padding: 14px;
+    }
+
+    .course-stage-head span {
+      display: inline-flex;
+      width: fit-content;
+      border-radius: 999px;
+      background: var(--course-color);
+      color: #050505;
+      padding: 5px 9px;
+      font-size: 0.68rem;
+      font-weight: 920;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
     }
 
-    .course-table th:first-child,
-    .course-row-title {
-      width: 190px;
-      background: rgba(255, 255, 255, 0.05);
-      color: rgba(255, 255, 255, 0.88);
-      font-size: 0.78rem;
-      font-weight: 850;
-      line-height: 1.4;
+    .course-stage-head h3 {
+      margin: 10px 0 8px;
+      color: white;
+      font-size: clamp(1.2rem, 2.2vw, 1.75rem);
+      line-height: 1.05;
     }
 
-    .course-table td {
-      color: rgba(255, 255, 255, 0.78);
-      font-size: 0.78rem;
-      line-height: 1.45;
-      font-weight: 620;
-    }
-
-    .course-table ul {
+    .course-stage-head p {
       margin: 0;
-      padding-left: 16px;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 0.9rem;
+      line-height: 1.55;
+      font-weight: 640;
+      max-width: 760px;
     }
 
-    .course-table li + li {
-      margin-top: 5px;
+    .course-card-grid {
+      animation: course-cards-rise 420ms ease both;
     }
 
-    .course-year-1 {
-      background: rgba(176, 140, 255, 0.16);
+    .course-card-grid .feature-card {
+      border-color: color-mix(in srgb, var(--course-color) 24%, rgba(255, 255, 255, 0.12));
     }
 
-    .course-year-2 {
-      background: rgba(255, 91, 214, 0.15);
+    .course-card-grid .feature-card span {
+      color: var(--course-color);
     }
 
-    .course-year-3 {
-      background: rgba(89, 146, 255, 0.16);
+    .course-card-grid .feature-card p {
+      white-space: pre-line;
     }
 
-    .course-year-4 {
-      background: rgba(111, 223, 113, 0.14);
+    .course-theme-1 {
+      --course-color: #b08cff;
     }
 
-    .course-year-after {
-      background: rgba(42, 219, 228, 0.15);
+    .course-theme-2 {
+      --course-color: #ec00c6;
     }
 
-    .course-table th.course-year-1 {
-      background: #9400ff;
+    .course-theme-3 {
+      --course-color: #4f8cff;
     }
 
-    .course-table th.course-year-2 {
-      background: #ec00c6;
+    .course-theme-4 {
+      --course-color: #25df62;
     }
 
-    .course-table th.course-year-3 {
-      background: #3b7ddd;
+    @keyframes course-scroll-in {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    .course-table th.course-year-4 {
-      background: #00d53a;
+    @keyframes course-cards-rise {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    .course-table th.course-year-after {
-      background: #00cfd7;
+    @keyframes portfolio-screen-in {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes card-fade-in {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 1ms !important;
+        scroll-behavior: auto !important;
+      }
     }
 
     @media (max-width: 900px) {
@@ -1159,17 +1347,12 @@
         grid-template-columns: 1fr;
       }
 
+      .course-tabs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
       .profile-summary strong {
         font-size: 1.65rem;
-      }
-
-      .course-table {
-        min-width: 760px;
-      }
-
-      .course-table th:first-child,
-      .course-row-title {
-        width: 150px;
       }
 
       .stage-tabs-list {
@@ -1237,6 +1420,7 @@
   </div>
   <div class="noise" aria-hidden="true"></div>
   <div class="snow" aria-hidden="true" id="snow"></div>
+  <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
 
   <main class="shell">
     <section class="hero" aria-label="профиль">
@@ -1256,7 +1440,7 @@
         <div class="verify">✓</div>
       </div>
       <div class="hero-image-card">
-        <img src="assets/hero-card.webp" alt="Фотография профиля">
+        <img src="assets/hero-card.webp?v=20260605" alt="Фотография профиля">
       </div>
       <div class="socials" aria-label="стек">
         <span>HTML</span>
@@ -1297,7 +1481,7 @@
             <small>02</small>
           </button>
           <button class="filter-btn stage-tab" type="button" data-tab="courses" role="tab" aria-selected="false">
-            <span>по курсам</span>
+            <span>курс</span>
             <small>03</small>
           </button>
           <button class="filter-btn stage-tab" type="button" data-tab="projects" role="tab" aria-selected="false">
@@ -1313,7 +1497,7 @@
             <span class="eyebrow" id="sectionKicker">личный профиль</span>
             <h2 id="sectionTitle">Обо мне</h2>
           </div>
-          <div class="ghost-tag" id="activeFilterLabel">full-stack</div>
+          <div class="ghost-tag" id="activeFilterLabel" hidden>full-stack</div>
         </div>
         <div class="portfolio-content" id="contentRoot"></div>
       </section>
@@ -1322,74 +1506,74 @@
 
   <script>
     const portfolioTabs = [
-      { id: "about", title: "Обо мне", kicker: "личный профиль", badge: "full-stack", course: "1", focus: "base", status: "1 курс: собираю базу full-stack" },
-      { id: "skills", title: "Что я умею", kicker: "технические навыки", badge: "frontend + backend", course: "1", focus: "stack", status: "умею делать интерфейсы и серверную часть" },
-      { id: "courses", title: "Рост по курсам", kicker: "план практики", badge: "1-4 курс", course: "1-4", focus: "growth", status: "путь от базы до full-stack продукта" },
-      { id: "projects", title: "Проекты", kicker: "портфолио", badge: "production", course: "4", focus: "release", status: "готовлю проекты для портфолио и резюме" }
+      { id: "about", title: "Обо мне", kicker: "личный профиль", badge: "full-stack", course: "1", focus: "база", status: "1 курс: собираю базу full-stack" },
+      { id: "skills", title: "Что я умею", kicker: "технические навыки", badge: "frontend + backend", course: "1", focus: "стек", status: "умею делать интерфейсы и серверную часть" },
+      { id: "courses", title: "Курс", kicker: "план практики", badge: "1 курс", course: "1", focus: "база", status: "1 курс: собираю базу full-stack" },
+      { id: "projects", title: "Проекты", kicker: "портфолио", badge: "production", course: "4", focus: "релиз", status: "готовлю проекты для портфолио и резюме" }
     ];
 
-    const courseColumns = [
-      { key: "year1", title: "1 курс", className: "course-year-1" },
-      { key: "year2", title: "2 курс", className: "course-year-2" },
-      { key: "year3", title: "3 курс", className: "course-year-3" },
-      { key: "year4", title: "4 курс", className: "course-year-4" },
-      { key: "after", title: "После выпуска", className: "course-year-after" }
-    ];
-
-    const courseRows = [
+    const courseDetails = [
       {
-        title: "Место практики и должность",
-        cells: {
-          year1: ["UX/UI designer", "Junior frontend trainee"],
-          year2: ["Web-студия", "Frontend / Backend intern"],
-          year3: ["IT-отдел компании", "Full-stack developer junior"],
-          year4: ["Команда продукта", "Full-stack developer"],
-          after: ["Коммерческая разработка", "Full-stack engineer"]
-        }
+        id: "year1",
+        number: "1 курс",
+        theme: "course-theme-1",
+        title: "Начало пути в Full-Stack",
+        focus: "база",
+        description: "Первый курс — старт full-stack пути: понять, как устроены сайты, как работает клиент и сервер, собрать первые страницы и подготовиться к реальным проектам.",
+        cards: [
+          { label: "практика", title: "Junior full-stack trainee", text: "Помощь с простыми страницами\nПервые задачи по JavaScript\nРазбор структуры проекта" },
+          { label: "обязанности", title: "Стартовая разработка", text: "Верстка базовых страниц\nПодключение простых скриптов\nПонимание клиент-серверной логики" },
+          { label: "уже умею", title: "База разработчика", text: "HTML/CSS база\nПервые шаги в JavaScript\nПонимание структуры сайта\nРабота с Git на базовом уровне" },
+          { label: "получу", title: "Фундамент full-stack", text: "Понимание frontend и backend\nПростые интерактивные страницы\nКомандная работа\nПрактика на учебных проектах" }
+        ]
       },
       {
-        title: "Функциональные обязанности",
-        cells: {
-          year1: ["Создание каркаса сайта", "Подбор шрифтов и цветов", "Верстка простых страниц"],
-          year2: ["Интерактивные страницы", "Подключение API", "Работа с формами и валидацией"],
-          year3: ["REST API", "Авторизация", "База данных", "Интеграция фронта и бэка"],
-          year4: ["Архитектура приложения", "Деплой", "Оптимизация", "Командная разработка"],
-          after: ["Разработка продукта", "Поддержка production", "Работа с задачами бизнеса"]
-        }
+        id: "year2",
+        number: "2 курс",
+        theme: "course-theme-2",
+        title: "Frontend и первые API",
+        focus: "фронтенд",
+        description: "На втором курсе упор на интерактивность: JavaScript, React, формы, запросы к API и первые связки frontend + backend.",
+        cards: [
+          { label: "практика", title: "Web-студия", text: "Frontend / Backend intern\nРабота рядом с командой" },
+          { label: "обязанности", title: "Интерактивные страницы", text: "Подключение API\nРабота с формами\nВалидация данных\nСостояния загрузки и ошибок" },
+          { label: "уже умею", title: "Frontend база", text: "JavaScript\nGit\nАдаптивная верстка\nБазовый React" },
+          { label: "получу", title: "SPA-мышление", text: "React-компоненты\nАсинхронность\nРабота с внешними сервисами\nРазбор чужого кода" }
+        ]
       },
       {
-        title: "Навыки, которыми обладаю",
-        cells: {
-          year1: ["Самопрезентация", "HTML/CSS база", "Генерация картинок с помощью ИИ", "Понимание структуры сайта"],
-          year2: ["JavaScript", "Git", "Адаптивная верстка", "Базовый React"],
-          year3: ["Node.js", "Express", "SQL", "JWT", "Работа с API"],
-          year4: ["TypeScript", "Docker", "CI/CD", "Проектирование модулей"],
-          after: ["Full-stack мышление", "Ответственность за фичу целиком", "Работа в команде"]
-        }
+        id: "year3",
+        number: "3 курс",
+        theme: "course-theme-3",
+        title: "Backend и базы данных",
+        focus: "бэкенд",
+        description: "Третий курс — момент, где full-stack становится настоящим: API, авторизация, SQL, хранение данных и интеграция фронта с сервером.",
+        cards: [
+          { label: "практика", title: "IT-отдел компании", text: "Full-stack developer junior\nРабота с реальными задачами" },
+          { label: "обязанности", title: "Серверная логика", text: "REST API\nАвторизация\nБаза данных\nИнтеграция фронта и бэка" },
+          { label: "уже умею", title: "Backend стек", text: "Node.js\nExpress\nSQL\nJWT\nРабота с API" },
+          { label: "получу", title: "Архитектура данных", text: "Проектирование БД\nBackend-архитектура\nБезопасность API\nFull-stack приложения" }
+        ]
       },
       {
-        title: "Навыки, которые получу",
-        cells: {
-          year1: ["Создание прототипа сайта", "Работа в команде", "Базовый UI"],
-          year2: ["React-компоненты", "Асинхронность", "Работа с внешними сервисами"],
-          year3: ["Проектирование БД", "Backend-архитектура", "Безопасность API"],
-          year4: ["Микросервисы на базовом уровне", "Тестирование", "Мониторинг", "DevOps-процессы"],
-          after: ["Middle-ready стек", "Коммерческая самостоятельность", "Сильное портфолио"]
-        }
-      },
-      {
-        title: "Как я получу эти навыки",
-        cells: {
-          year1: ["Выполняя реальные макеты", "Работая в команде", "Проходя онлайн-курсы"],
-          year2: ["Делая SPA-проекты", "Разбирая чужой код", "Подключая реальные API"],
-          year3: ["Собирая full-stack приложения", "Проектируя схемы данных", "Пиша API"],
-          year4: ["Защищая дипломный продукт", "Деплоя проект", "Участвуя в ревью"],
-          after: ["Работая на реальных задачах", "Собирая кейсы", "Прокачивая английский и архитектуру"]
-        }
+        id: "year4",
+        number: "4 курс",
+        theme: "course-theme-4",
+        title: "Production и выпускной продукт",
+        focus: "полный стек",
+        description: "Четвертый курс — довести стек до результата: TypeScript, деплой, Docker, тесты, командная разработка и сильный выпускной проект.",
+        cards: [
+          { label: "практика", title: "Команда продукта", text: "Full-stack developer\nУчастие в продуктовой разработке" },
+          { label: "обязанности", title: "Продукт целиком", text: "Архитектура приложения\nДеплой\nОптимизация\nКомандная разработка" },
+          { label: "уже умею", title: "Production инструменты", text: "TypeScript\nDocker\nCI/CD\nПроектирование модулей" },
+          { label: "получу", title: "Готовность к работе", text: "Тестирование\nМониторинг\nDevOps-процессы\nДипломный full-stack проект" }
+        ]
       }
     ];
 
     let currentTab = "about";
+    let currentCourse = "year1";
+    let contentTransitionTimer;
 
     const contentRoot = document.getElementById("contentRoot");
     const tabContainer = document.getElementById("tabContainer");
@@ -1417,10 +1601,6 @@
           <p>${escapeHtml(card.text)}</p>
         </article>
       `).join("");
-    }
-
-    function renderCell(items) {
-      return `<ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
     }
 
     function renderAbout() {
@@ -1458,27 +1638,26 @@
     }
 
     function renderCourses() {
-      const head = courseColumns.map((column) => `<th class="${column.className}">${escapeHtml(column.title)}</th>`).join("");
-      const rows = courseRows.map((row) => `
-        <tr>
-          <th class="course-row-title">${escapeHtml(row.title)}</th>
-          ${courseColumns.map((column) => `<td class="${column.className}">${renderCell(row.cells[column.key])}</td>`).join("")}
-        </tr>
+      const activeCourse = courseDetails.find((course) => course.id === currentCourse) || courseDetails[0];
+      const courseTabs = courseDetails.map((course) => `
+        <button class="course-tab ${course.theme} ${course.id === activeCourse.id ? "active" : ""}" type="button" data-course="${escapeHtml(course.id)}" role="tab" aria-selected="${course.id === activeCourse.id}">
+          ${escapeHtml(course.number)}
+        </button>
       `).join("");
 
       return `
         <section class="portfolio-screen">
-          <p class="lead-copy">Вот эта часть сделана по логике скриншота: что я делаю и какие навыки набираю на каждом курсе, чтобы к выпуску быть не просто “студентом с сайтом”, а full-stack разработчиком с понятным ростом.</p>
-          <div class="course-board">
-            <table class="course-table">
-              <thead>
-                <tr>
-                  <th></th>
-                  ${head}
-                </tr>
-              </thead>
-              <tbody>${rows}</tbody>
-            </table>
+          <p class="lead-copy">Выбери курс: внутри каждого этапа показано, где я могу проходить практику, какие задачи беру и какие full-stack навыки прокачиваю.</p>
+          <div class="course-tabs" role="tablist" aria-label="выбор курса">${courseTabs}</div>
+          <div class="course-detail ${activeCourse.theme}" id="courseDetail">
+            <div class="course-stage-head">
+              <span>${escapeHtml(activeCourse.number)}</span>
+              <h3>${escapeHtml(activeCourse.title)}</h3>
+              <p>${escapeHtml(activeCourse.description)}</p>
+            </div>
+            <div class="feature-grid course-card-grid">
+              ${renderCards(activeCourse.cards, "feature-card")}
+            </div>
           </div>
         </section>
       `;
@@ -1500,14 +1679,42 @@
       `;
     }
 
-    function renderCurrentTab() {
+    function setAnimatedContent(html, afterRender) {
+      clearTimeout(contentTransitionTimer);
+
+      const applyContent = () => {
+        contentRoot.innerHTML = html;
+        contentRoot.scrollTop = 0;
+        requestAnimationFrame(() => {
+          contentRoot.classList.remove("is-switching");
+          if (afterRender) afterRender();
+        });
+      };
+
+      if (!contentRoot.innerHTML) {
+        applyContent();
+        return;
+      }
+
+      contentRoot.classList.add("is-switching");
+      contentTransitionTimer = setTimeout(applyContent, 150);
+    }
+
+    function renderCurrentTab(afterRender) {
       const tab = portfolioTabs.find((item) => item.id === currentTab) || portfolioTabs[0];
+      const activeCourse = courseDetails.find((course) => course.id === currentCourse) || courseDetails[0];
       sectionKicker.textContent = tab.kicker;
       sectionTitle.textContent = tab.title;
-      activeFilterLabel.textContent = tab.badge;
       courseLabel.textContent = tab.course;
       focusLabel.textContent = tab.focus;
       statusLine.textContent = tab.status;
+
+      if (tab.id === "courses") {
+        sectionTitle.textContent = "Курс";
+        courseLabel.textContent = activeCourse.number.replace(" курс", "");
+        focusLabel.textContent = activeCourse.focus;
+        statusLine.textContent = `${activeCourse.number}: ${activeCourse.title.toLowerCase()}`;
+      }
 
       document.querySelectorAll(".filter-btn").forEach((button) => {
         const isActive = button.dataset.tab === tab.id;
@@ -1515,15 +1722,18 @@
         button.setAttribute("aria-selected", String(isActive));
       });
 
+      let nextContent;
       if (tab.id === "skills") {
-        contentRoot.innerHTML = renderSkills();
+        nextContent = renderSkills();
       } else if (tab.id === "courses") {
-        contentRoot.innerHTML = renderCourses();
+        nextContent = renderCourses();
       } else if (tab.id === "projects") {
-        contentRoot.innerHTML = renderProjects();
+        nextContent = renderProjects();
       } else {
-        contentRoot.innerHTML = renderAbout();
+        nextContent = renderAbout();
       }
+
+      setAnimatedContent(nextContent, afterRender);
     }
 
     function initTabs() {
@@ -1533,6 +1743,72 @@
         currentTab = button.dataset.tab;
         renderCurrentTab();
       });
+    }
+
+    function initCourseTabs() {
+      contentRoot.addEventListener("click", (event) => {
+        const button = event.target.closest(".course-tab");
+        if (!button || !contentRoot.contains(button)) return;
+
+        currentCourse = button.dataset.course;
+        renderCurrentTab(() => {
+          const activeButton = contentRoot.querySelector(`.course-tab[data-course="${currentCourse}"]`);
+          const detail = document.getElementById("courseDetail");
+          activeButton?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+          detail?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        });
+      });
+    }
+
+    function initCursor() {
+      const cursor = document.getElementById("cursorDot");
+      if (!cursor || !window.matchMedia("(pointer: fine)").matches) return;
+
+      let targetX = window.innerWidth / 2;
+      let targetY = window.innerHeight / 2;
+      let currentX = targetX;
+      let currentY = targetY;
+
+      document.body.classList.add("cursor-ready");
+
+      function moveCursor() {
+        currentX += (targetX - currentX) * 0.28;
+        currentY += (targetY - currentY) * 0.28;
+        cursor.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) translate(-50%, -50%)`;
+        requestAnimationFrame(moveCursor);
+      }
+
+      window.addEventListener("mousemove", (event) => {
+        targetX = event.clientX;
+        targetY = event.clientY;
+        cursor.classList.add("active");
+      });
+
+      window.addEventListener("mouseleave", () => {
+        cursor.classList.remove("active");
+      });
+
+      window.addEventListener("mousedown", () => {
+        cursor.classList.add("press");
+      });
+
+      window.addEventListener("mouseup", () => {
+        cursor.classList.remove("press");
+      });
+
+      document.addEventListener("mouseover", (event) => {
+        if (event.target.closest("button, a, input, label")) {
+          cursor.classList.add("link");
+        }
+      });
+
+      document.addEventListener("mouseout", (event) => {
+        if (event.target.closest("button, a, input, label")) {
+          cursor.classList.remove("link");
+        }
+      });
+
+      moveCursor();
     }
 
     function initSnow() {
@@ -1553,6 +1829,8 @@
 
     renderCurrentTab();
     initTabs();
+    initCourseTabs();
+    initCursor();
     initSnow();
   </script>
 </body>
