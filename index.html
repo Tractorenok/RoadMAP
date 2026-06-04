@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Full-stack разработчик | Портфолио</title>
   <style>
+    /* Глобальные переменные темы: основные цвета, радиусы и тени всего сайта. */
     :root {
       color-scheme: dark;
       --bg: #030303;
@@ -23,10 +24,12 @@
       --shadow: 0 24px 70px rgba(0, 0, 0, 0.72);
     }
 
+    /* Базовый сброс размеров, чтобы padding и border не ломали ширину блоков. */
     * {
       box-sizing: border-box;
     }
 
+    /* Плавная прокрутка нужна для переходов внутри вкладки "Курс". */
     html,
     body {
       min-height: 100%;
@@ -47,6 +50,7 @@
       text-rendering: geometricPrecision;
     }
 
+    /* На устройствах с мышью скрываем обычный курсор и показываем кастомную точку. */
     @media (pointer: fine) {
       body.cursor-ready,
       body.cursor-ready * {
@@ -59,6 +63,7 @@
       font: inherit;
     }
 
+    /* Фоновая сцена: темный градиент, световые пятна и общая атмосфера сайта. */
     .scene {
       position: fixed;
       inset: 0;
@@ -94,6 +99,7 @@
       z-index: 1;
     }
 
+    /* Декоративные силуэты на фоне, чтобы страница не была плоской. */
     .mountains {
       position: absolute;
       left: 0;
@@ -126,6 +132,7 @@
       clip-path: polygon(0 26%, 10% 8%, 26% 19%, 36% 0, 51% 19%, 65% 4%, 78% 21%, 100% 16%, 92% 100%, 0 100%);
     }
 
+    /* Шум поверх фона добавляет зернистость и визуальную глубину. */
     .noise {
       position: fixed;
       inset: 0;
@@ -138,6 +145,7 @@
       mix-blend-mode: screen;
     }
 
+    /* Контейнер снежинок/частиц. Сами частицы создаются в JavaScript. */
     .snow {
       position: fixed;
       inset: 0;
@@ -166,6 +174,7 @@
       }
     }
 
+    /* Общая оболочка страницы: ограничивает ширину и поднимает контент над фоном. */
     .shell {
       position: relative;
       z-index: 2;
@@ -183,6 +192,7 @@
       margin-bottom: 58px;
     }
 
+    /* Верхний hero-блок: аватар, заголовок, короткое описание, карточка профиля и баннер. */
     .tiny-icon svg {
       width: 16px;
       height: 16px;
@@ -226,6 +236,7 @@
         0 18px 50px rgba(0, 0, 0, 0.7);
     }
 
+    /* Все изображения внутри круглого аватара, мини-аватара и баннера заполняют контейнер. */
     .avatar img,
     .mini-avatar img,
     .hero-image-card img {
@@ -331,6 +342,7 @@
       box-shadow: 0 18px 54px rgba(0, 0, 0, 0.58);
     }
 
+    /* Затемнение поверх баннера делает картинку частью общего темного стиля. */
     .hero-image-card::after {
       content: "";
       position: absolute;
@@ -346,6 +358,7 @@
       filter: contrast(1.04) brightness(0.84);
     }
 
+    /* Кастомный курсор: маленькая фиолетовая точка с мягким свечением. */
     .cursor-dot {
       position: fixed;
       left: 0;
@@ -395,6 +408,7 @@
       }
     }
 
+    /* Стек технологий под баннером. */
     .socials {
       display: flex;
       gap: 9px;
@@ -412,6 +426,7 @@
       text-shadow: 0 0 18px rgba(255, 255, 255, 0.55);
     }
 
+    /* Основная рабочая зона: слева меню/профиль, справа контент выбранной вкладки. */
     .dashboard {
       display: grid;
       grid-template-columns: minmax(240px, 300px) 1fr;
@@ -428,6 +443,7 @@
       border-radius: var(--radius);
     }
 
+    /* Левая панель остается на месте при прокрутке, чтобы навигация всегда была рядом. */
     .side-panel {
       position: sticky;
       top: 24px;
@@ -516,6 +532,7 @@
       transition: color 220ms ease, text-shadow 220ms ease, transform 220ms ease;
     }
 
+    /* Вертикальное меню вкладок слева: "Обо мне", "Что я умею", "Курс", "Проекты". */
     .filters {
       display: flex;
       flex-direction: column;
@@ -527,6 +544,7 @@
       gap: 8px;
     }
 
+    /* Кнопки вкладок сделаны скошенными, чтобы напоминать игровое меню. */
     .filter-btn,
     .reset-btn {
       width: 100%;
@@ -611,6 +629,7 @@
       background: rgba(255, 255, 255, 0.075);
     }
 
+    /* Правая панель, куда JavaScript подставляет содержимое активной вкладки. */
     .roadmap {
       padding: 18px;
       min-height: 620px;
@@ -923,6 +942,7 @@
       background: rgba(255, 255, 255, 0.04);
     }
 
+    /* Короткая карточка-пояснение в левой панели. */
     .profile-summary {
       display: grid;
       gap: 10px;
@@ -949,6 +969,7 @@
       flex-direction: column;
     }
 
+    /* Контейнер контента вкладок. Класс is-switching включает плавное исчезновение перед заменой HTML. */
     .portfolio-content {
       min-height: 0;
       padding-top: 18px;
@@ -978,6 +999,7 @@
       border-radius: 999px;
     }
 
+    /* Экран одной вкладки: текст + сетка карточек. */
     .portfolio-screen {
       display: grid;
       gap: 16px;
@@ -993,6 +1015,7 @@
       max-width: 760px;
     }
 
+    /* Сетки карточек для разделов "Обо мне", "Что я умею", "Проекты" и карточек курса. */
     .feature-grid,
     .skill-grid,
     .project-grid {
@@ -1048,6 +1071,7 @@
       box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
     }
 
+    /* Облако технологий во вкладке "Что я умею". */
     .feature-card span,
     .skill-card span,
     .project-card span {
@@ -1095,6 +1119,7 @@
       font-weight: 780;
     }
 
+    /* Внутренние под-вкладки раздела "Курс": 1, 2, 3 и 4 курс. */
     .course-tabs {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1137,6 +1162,7 @@
       box-shadow: 0 0 24px color-mix(in srgb, var(--course-color) 26%, transparent);
     }
 
+    /* Обертка выбранного курса. Цвет берется из темы курса через CSS-переменную --course-color. */
     .course-detail {
       --course-color: var(--violet);
       display: grid;
@@ -1145,6 +1171,7 @@
       scroll-margin-top: 14px;
     }
 
+    /* Большая верхняя карточка выбранного курса с названием и описанием. */
     .course-stage-head {
       border: 1px solid color-mix(in srgb, var(--course-color) 32%, rgba(255, 255, 255, 0.12));
       border-radius: var(--radius);
@@ -1199,6 +1226,7 @@
       white-space: pre-line;
     }
 
+    /* Цветовые темы курсов. Эти классы добавляются JavaScript-ом к кнопкам и карточкам. */
     .course-theme-1 {
       --course-color: #b08cff;
     }
@@ -1215,6 +1243,7 @@
       --course-color: #25df62;
     }
 
+    /* Анимации появления контента и карточек при переключении вкладок. */
     @keyframes course-scroll-in {
       from {
         opacity: 0;
@@ -1263,6 +1292,7 @@
       }
     }
 
+    /* Если пользователь отключил анимации в системе, сайт уважает это и почти не анимируется. */
     @media (prefers-reduced-motion: reduce) {
       html {
         scroll-behavior: auto;
@@ -1278,6 +1308,7 @@
       }
     }
 
+    /* Адаптация для планшетов: панели складываются в одну колонку, а меню становится сеткой. */
     @media (max-width: 900px) {
       .shell {
         width: min(100% - 28px, 760px);
@@ -1319,6 +1350,7 @@
       }
     }
 
+    /* Адаптация для телефонов: карточки и вкладки идут в одну колонку, текст не вылезает. */
     @media (max-width: 620px) {
       .shell {
         width: min(100% - 22px, 460px);
@@ -1414,15 +1446,18 @@
   </style>
 </head>
 <body>
+  <!-- Декоративный фон сайта: силуэты, шум и частицы находятся отдельно от основного контента. -->
   <div class="scene" aria-hidden="true">
     <div class="temple"></div>
     <div class="mountains"></div>
   </div>
   <div class="noise" aria-hidden="true"></div>
   <div class="snow" aria-hidden="true" id="snow"></div>
+  <!-- Кастомный курсор-точка, которым управляет JavaScript. -->
   <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
 
   <main class="shell">
+    <!-- Верхняя визитка: аватар, заголовок, мини-профиль, баннер и стек технологий. -->
     <section class="hero" aria-label="профиль">
       <div class="avatar">
         <img src="assets/avatar-main.jpg" alt="Аватар full-stack разработчика">
@@ -1452,7 +1487,9 @@
       </div>
     </section>
 
+    <!-- Основной интерфейс портфолио: слева навигация, справа содержимое вкладок. -->
     <section class="dashboard">
+      <!-- Левая панель: краткое описание профиля, текущий курс/фокус и кнопки вкладок. -->
       <aside class="side-panel" aria-label="навигация портфолио">
         <div class="profile-summary">
           <span class="eyebrow">профиль</span>
@@ -1491,6 +1528,7 @@
         </div>
       </aside>
 
+      <!-- Правая панель: заголовок активного раздела и контейнер, куда JS подставляет контент. -->
       <section class="roadmap portfolio-panel" aria-label="портфолио full-stack разработчика">
         <div class="roadmap-head">
           <div>
@@ -1505,6 +1543,7 @@
   </main>
 
   <script>
+    // Основные вкладки сайта. Здесь меняются названия разделов, бейджи, курс, фокус и строка под мини-профилем.
     const portfolioTabs = [
       { id: "about", title: "Обо мне", kicker: "личный профиль", badge: "full-stack", course: "1", focus: "база", status: "1 курс: собираю базу full-stack" },
       { id: "skills", title: "Что я умею", kicker: "технические навыки", badge: "frontend + backend", course: "1", focus: "стек", status: "умею делать интерфейсы и серверную часть" },
@@ -1512,6 +1551,7 @@
       { id: "projects", title: "Проекты", kicker: "портфолио", badge: "production", course: "4", focus: "релиз", status: "готовлю проекты для портфолио и резюме" }
     ];
 
+    // Данные для под-вкладок раздела "Курс". Каждый объект отвечает за один курс и его карточки.
     const courseDetails = [
       {
         id: "year1",
@@ -1571,10 +1611,12 @@
       }
     ];
 
+    // Текущее состояние интерфейса: какая основная вкладка и какой курс сейчас открыты.
     let currentTab = "about";
     let currentCourse = "year1";
     let contentTransitionTimer;
 
+    // Быстрые ссылки на DOM-элементы, которые часто обновляются через JavaScript.
     const contentRoot = document.getElementById("contentRoot");
     const tabContainer = document.getElementById("tabContainer");
     const sectionKicker = document.getElementById("sectionKicker");
@@ -1584,6 +1626,7 @@
     const focusLabel = document.getElementById("focusLabel");
     const statusLine = document.getElementById("statusLine");
 
+    // Защищает HTML от случайной вставки тегов из текстовых данных.
     function escapeHtml(value) {
       return String(value).replace(/[&<>"]/g, (char) => ({
         "&": "&amp;",
@@ -1593,6 +1636,7 @@
       }[char]));
     }
 
+    // Универсально собирает HTML карточек: используется в разделах и внутри курсов.
     function renderCards(cards, className) {
       return cards.map((card) => `
         <article class="${className}">
@@ -1603,6 +1647,7 @@
       `).join("");
     }
 
+    // Контент вкладки "Обо мне".
     function renderAbout() {
       const cards = [
         { label: "роль", title: "Full-stack разработчик", text: "Мне интересно закрывать задачу целиком: от интерфейса и пользовательского сценария до API, базы данных и деплоя." },
@@ -1619,6 +1664,7 @@
       `;
     }
 
+    // Контент вкладки "Что я умею": облако технологий и карточки навыков.
     function renderSkills() {
       const skills = [
         { label: "frontend", title: "Интерфейсы", text: "HTML, CSS, адаптивная верстка, JavaScript, React, компоненты, работа с состоянием и API." },
@@ -1637,6 +1683,7 @@
       `;
     }
 
+    // Контент вкладки "Курс": рисует кнопки 1-4 курса и карточки выбранного курса.
     function renderCourses() {
       const activeCourse = courseDetails.find((course) => course.id === currentCourse) || courseDetails[0];
       const courseTabs = courseDetails.map((course) => `
@@ -1663,6 +1710,7 @@
       `;
     }
 
+    // Контент вкладки "Проекты".
     function renderProjects() {
       const projects = [
         { label: "portfolio", title: "Личное портфолио", text: "Сайт с вкладками, описанием навыков, планом по курсам и визуальным стилем под игровое меню." },
@@ -1679,6 +1727,7 @@
       `;
     }
 
+    // Меняет HTML правой панели с плавным исчезновением и появлением нового контента.
     function setAnimatedContent(html, afterRender) {
       clearTimeout(contentTransitionTimer);
 
@@ -1700,6 +1749,7 @@
       contentTransitionTimer = setTimeout(applyContent, 150);
     }
 
+    // Главная функция перерисовки: обновляет заголовки, левую панель, активные кнопки и контент.
     function renderCurrentTab(afterRender) {
       const tab = portfolioTabs.find((item) => item.id === currentTab) || portfolioTabs[0];
       const activeCourse = courseDetails.find((course) => course.id === currentCourse) || courseDetails[0];
@@ -1736,6 +1786,7 @@
       setAnimatedContent(nextContent, afterRender);
     }
 
+    // Обработка кликов по основным вкладкам слева.
     function initTabs() {
       tabContainer.addEventListener("click", (event) => {
         const button = event.target.closest(".filter-btn");
@@ -1745,6 +1796,7 @@
       });
     }
 
+    // Обработка кликов по под-вкладкам курса и плавная прокрутка к выбранному блоку.
     function initCourseTabs() {
       contentRoot.addEventListener("click", (event) => {
         const button = event.target.closest(".course-tab");
@@ -1760,6 +1812,7 @@
       });
     }
 
+    // Кастомный курсор: плавно догоняет мышь, увеличивается над кнопками и сжимается при клике.
     function initCursor() {
       const cursor = document.getElementById("cursorDot");
       if (!cursor || !window.matchMedia("(pointer: fine)").matches) return;
@@ -1811,6 +1864,7 @@
       moveCursor();
     }
 
+    // Создает фоновые частицы-снежинки и задает им случайное движение.
     function initSnow() {
       const snow = document.getElementById("snow");
       const flakes = Array.from({ length: 46 }, (_, index) => {
@@ -1827,6 +1881,7 @@
       snow.append(...flakes);
     }
 
+    // Старт приложения: сначала рисуем контент, потом подключаем клики, курсор и частицы.
     renderCurrentTab();
     initTabs();
     initCourseTabs();
@@ -1835,3 +1890,4 @@
   </script>
 </body>
 </html>
+    
