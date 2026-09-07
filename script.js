@@ -66,311 +66,118 @@
       }
     ];
 
-    // Текущее состояние интерфейса: какая основная вкладка и какой курс сейчас открыты.
-    let currentTab = "about";
-    let currentCourse = "year1";
-    let contentTransitionTimer;
 
-    // Быстрые ссылки на DOM-элементы, которые часто обновляются через JavaScript.
-    const contentRoot = document.getElementById("contentRoot");
-    const tabContainer = document.getElementById("tabContainer");
-    const sectionKicker = document.getElementById("sectionKicker");
-    const sectionTitle = document.getElementById("sectionTitle");
-    const activeFilterLabel = document.getElementById("activeFilterLabel");
-    const courseLabel = document.getElementById("courseLabel");
-    const focusLabel = document.getElementById("focusLabel");
-    const statusLine = document.getElementById("statusLine");
-    const contactButton = document.getElementById("contactButton");
-    const contactPopup = document.getElementById("contactPopup");
+// Presentation and interaction. The original four-year course data is preserved above.
+const root = document.getElementById('contentRoot');
+const tabs = document.getElementById('tabContainer');
+const kicker = document.getElementById('sectionKicker');
+const count = document.getElementById('chapterCount');
+const dialog = document.getElementById('contactDialog');
+let currentTab = 'about';
+let currentCourse = 'year1';
 
-    // Защищает HTML от случайной вставки тегов из текстовых данных.
-    function escapeHtml(value) {
-      return String(value).replace(/[&<>"]/g, (char) => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        "\"": "&quot;"
-      }[char]));
-    }
-
-    // Универсально собирает HTML карточек: используется в разделах и внутри курсов.
-    function renderCards(cards, className) {
-      return cards.map((card) => `
-        <article class="${className}">
-          <span>${escapeHtml(card.label)}</span>
-          <h3>${escapeHtml(card.title)}</h3>
-          <p>${escapeHtml(card.text)}</p>
-        </article>
-      `).join("");
-    }
-
-    // Контент вкладки "Обо мне".
-    function renderAbout() {
-      const cards = [
-        { label: "роль", title: "Full-stack разработчик", text: "Мне интересно закрывать задачу целиком: от интерфейса и пользовательского сценария до API, базы данных и деплоя." },
-        { label: "цель", title: "Вырасти в сильного инженера", text: "На каждом курсе хочу добавлять новый слой: дизайн и верстка, frontend, backend, архитектура, production." },
-        { label: "подход", title: "Практика важнее теории", text: "Лучше один рабочий проект с нормальным кодом, чем десять недоделанных страниц без логики." },
-        { label: "фокус", title: "Коммерческий стек", text: "React, Node.js, TypeScript, SQL, Git, Docker, API, тесты и понятная презентация результата." }
-      ];
-
-      return `
-        <section class="portfolio-screen">
-          <p class="lead-copy">Я full-stack разработчик в процессе прокачки: собираю сайты, учусь делать удобные интерфейсы, писать серверную логику, хранить данные и доводить проект до состояния, которое можно показать работодателю.</p>
-          <div class="feature-grid">${renderCards(cards, "feature-card")}</div>
-        </section>
-      `;
-    }
-
-    // Контент вкладки "Что я умею": облако технологий и карточки навыков.
-    function renderSkills() {
-      const skills = [
-        { label: "frontend", title: "Интерфейсы", text: "HTML, CSS, адаптивная верстка, JavaScript, React, компоненты, работа с состоянием и API." },
-        { label: "backend", title: "Серверная часть", text: "Node.js, Express, REST API, авторизация, обработка ошибок и структура backend-проекта." },
-        { label: "database", title: "Данные", text: "SQL, базовое проектирование таблиц, связи, CRUD-операции и понимание клиент-серверной логики." },
-        { label: "tools", title: "Инструменты", text: "Git, GitHub, Vite, npm, деплой, базовый Docker и аккуратная работа с задачами." }
-      ];
-      const stack = ["HTML", "CSS", "JavaScript", "TypeScript", "React", "Node.js", "Express", "SQL", "REST API", "Git", "Docker", "Figma"];
-
-      return `
-        <section class="portfolio-screen">
-          <p class="lead-copy">Мой стек строится вокруг полного цикла разработки: придумать интерфейс, сверстать, оживить, подключить сервер, сохранить данные и развернуть проект.</p>
-          <div class="stack-cloud">${stack.map((item) => `<span>${escapeHtml(item)}</span>`).join("")}</div>
-          <div class="skill-grid">${renderCards(skills, "skill-card")}</div>
-        </section>
-      `;
-    }
-
-    // Контент вкладки "Курс": рисует кнопки 1-4 курса и карточки выбранного курса.
-    function renderCourses() {
-      const activeCourse = courseDetails.find((course) => course.id === currentCourse) || courseDetails[0];
-      const courseTabs = courseDetails.map((course) => `
-        <button class="course-tab ${course.theme} ${course.id === activeCourse.id ? "active" : ""}" type="button" data-course="${escapeHtml(course.id)}" role="tab" aria-selected="${course.id === activeCourse.id}">
-          ${escapeHtml(course.number)}
-        </button>
-      `).join("");
-
-      return `
-        <section class="portfolio-screen">
-          <p class="lead-copy">Выбери курс: внутри каждого этапа показано, где я могу проходить практику, какие задачи беру и какие full-stack навыки прокачиваю.</p>
-          <div class="course-tabs" role="tablist" aria-label="выбор курса">${courseTabs}</div>
-          <div class="course-detail ${activeCourse.theme}" id="courseDetail">
-            <div class="course-stage-head">
-              <span>${escapeHtml(activeCourse.number)}</span>
-              <h3>${escapeHtml(activeCourse.title)}</h3>
-              <p>${escapeHtml(activeCourse.description)}</p>
-            </div>
-            <div class="feature-grid course-card-grid">
-              ${renderCards(activeCourse.cards, "feature-card")}
-            </div>
-          </div>
-        </section>
-      `;
-    }
-
-    // Контент вкладки "Проекты".
-    function renderProjects() {
-      const projects = [
-        { label: "portfolio", title: "Личное портфолио", text: "Сайт с вкладками, описанием навыков, планом по курсам и визуальным стилем под игровое меню." },
-        { label: "spa", title: "Full-stack SPA", text: "Приложение на React с авторизацией, личным кабинетом, API и сохранением данных в базе." },
-        { label: "api", title: "REST API сервис", text: "Backend на Node.js/Express: маршруты, контроллеры, валидация, база данных и документация." },
-        { label: "final", title: "Выпускной продукт", text: "Итоговый проект, который можно защитить, задеплоить и добавить в резюме как полноценный кейс." }
-      ];
-
-      return `
-        <section class="portfolio-screen">
-          <p class="lead-copy">Проекты нужны не для галочки, а чтобы показать: я могу взять идею, собрать интерфейс, написать логику и объяснить, как всё работает.</p>
-          <div class="project-grid">${renderCards(projects, "project-card")}</div>
-        </section>
-      `;
-    }
-
-    // Меняет HTML правой панели с плавным исчезновением и появлением нового контента.
-    function setAnimatedContent(html, afterRender) {
-      clearTimeout(contentTransitionTimer);
-
-      const applyContent = () => {
-        contentRoot.innerHTML = html;
-        contentRoot.scrollTop = 0;
-        requestAnimationFrame(() => {
-          contentRoot.classList.remove("is-switching");
-          if (afterRender) afterRender();
-        });
-      };
-
-      if (!contentRoot.innerHTML) {
-        applyContent();
-        return;
-      }
-
-      contentRoot.classList.add("is-switching");
-      contentTransitionTimer = setTimeout(applyContent, 150);
-    }
-
-    // Главная функция перерисовки: обновляет заголовки, левую панель, активные кнопки и контент.
-    function renderCurrentTab(afterRender) {
-      const tab = portfolioTabs.find((item) => item.id === currentTab) || portfolioTabs[0];
-      const activeCourse = courseDetails.find((course) => course.id === currentCourse) || courseDetails[0];
-      sectionKicker.textContent = tab.kicker;
-      sectionTitle.textContent = tab.title;
-      courseLabel.textContent = tab.course;
-      focusLabel.textContent = tab.focus;
-      statusLine.textContent = tab.status;
-
-      if (tab.id === "courses") {
-        sectionTitle.textContent = "Курс";
-        courseLabel.textContent = activeCourse.number.replace(" курс", "");
-        focusLabel.textContent = activeCourse.focus;
-        statusLine.textContent = `${activeCourse.number}: ${activeCourse.title.toLowerCase()}`;
-      }
-
-      document.querySelectorAll(".filter-btn").forEach((button) => {
-        const isActive = button.dataset.tab === tab.id;
-        button.classList.toggle("active", isActive);
-        button.setAttribute("aria-selected", String(isActive));
-      });
-
-      let nextContent;
-      if (tab.id === "skills") {
-        nextContent = renderSkills();
-      } else if (tab.id === "courses") {
-        nextContent = renderCourses();
-      } else if (tab.id === "projects") {
-        nextContent = renderProjects();
-      } else {
-        nextContent = renderAbout();
-      }
-
-      setAnimatedContent(nextContent, afterRender);
-    }
-
-    // Обработка кликов по основным вкладкам слева.
-    function initTabs() {
-      tabContainer.addEventListener("click", (event) => {
-        const button = event.target.closest(".filter-btn");
-        if (!button || !tabContainer.contains(button)) return;
-        currentTab = button.dataset.tab;
-        renderCurrentTab();
-      });
-    }
-
-    // Обработка кликов по под-вкладкам курса и плавная прокрутка к выбранному блоку.
-    function initCourseTabs() {
-      contentRoot.addEventListener("click", (event) => {
-        const button = event.target.closest(".course-tab");
-        if (!button || !contentRoot.contains(button)) return;
-
-        currentCourse = button.dataset.course;
-        renderCurrentTab(() => {
-          const activeButton = contentRoot.querySelector(`.course-tab[data-course="${currentCourse}"]`);
-          const detail = document.getElementById("courseDetail");
-          activeButton?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
-          detail?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-        });
-      });
-    }
-
-    function initContactPopup() {
-      if (!contactButton || !contactPopup) return;
-
-      function setOpen(isOpen) {
-        contactButton.setAttribute("aria-expanded", String(isOpen));
-        contactPopup.setAttribute("aria-hidden", String(!isOpen));
-        contactPopup.classList.toggle("is-open", isOpen);
-      }
-
-      contactButton.addEventListener("click", (event) => {
-        event.stopPropagation();
-        setOpen(!contactPopup.classList.contains("is-open"));
-      });
-
-      contactPopup.addEventListener("click", (event) => {
-        event.stopPropagation();
-      });
-
-      document.addEventListener("click", () => {
-        setOpen(false);
-      });
-
-      document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") {
-          setOpen(false);
-        }
-      });
-    }
-
-    // Кастомный курсор: плавно догоняет мышь, увеличивается над кнопками и сжимается при клике.
-    function initCursor() {
-      const cursor = document.getElementById("cursorDot");
-      if (!cursor || !window.matchMedia("(pointer: fine)").matches) return;
-
-      let targetX = window.innerWidth / 2;
-      let targetY = window.innerHeight / 2;
-      let currentX = targetX;
-      let currentY = targetY;
-
-      document.body.classList.add("cursor-ready");
-
-      function moveCursor() {
-        currentX += (targetX - currentX) * 0.28;
-        currentY += (targetY - currentY) * 0.28;
-        cursor.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) translate(-50%, -50%)`;
-        requestAnimationFrame(moveCursor);
-      }
-
-      window.addEventListener("mousemove", (event) => {
-        targetX = event.clientX;
-        targetY = event.clientY;
-        cursor.classList.add("active");
-      });
-
-      window.addEventListener("mouseleave", () => {
-        cursor.classList.remove("active");
-      });
-
-      window.addEventListener("mousedown", () => {
-        cursor.classList.add("press");
-      });
-
-      window.addEventListener("mouseup", () => {
-        cursor.classList.remove("press");
-      });
-
-      document.addEventListener("mouseover", (event) => {
-        if (event.target.closest("button, a, input, label")) {
-          cursor.classList.add("link");
-        }
-      });
-
-      document.addEventListener("mouseout", (event) => {
-        if (event.target.closest("button, a, input, label")) {
-          cursor.classList.remove("link");
-        }
-      });
-
-      moveCursor();
-    }
-
-    // Создает фоновые частицы-снежинки и задает им случайное движение.
-    function initSnow() {
-      const snow = document.getElementById("snow");
-      const flakes = Array.from({ length: 46 }, (_, index) => {
-        const flake = document.createElement("i");
-        flake.style.setProperty("--x", `${Math.random() * 100}vw`);
-        flake.style.setProperty("--sway", `${(Math.random() * 12 - 6).toFixed(2)}vw`);
-        flake.style.setProperty("--duration", `${8 + Math.random() * 12}s`);
-        flake.style.setProperty("--delay", `${-1 * Math.random() * 16}s`);
-        flake.style.setProperty("--alpha", `${0.25 + Math.random() * 0.65}`);
-        flake.style.width = `${index % 7 === 0 ? 4 : 2 + Math.random() * 2}px`;
-        flake.style.height = flake.style.width;
-        return flake;
-      });
-      snow.append(...flakes);
-    }
-
-    // Старт приложения: сначала рисуем контент, потом подключаем клики, курсор и частицы.
-    renderCurrentTab();
-    initTabs();
-    initCourseTabs();
-    initContactPopup();
-    initCursor();
-    initSnow();
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+}
+const about = () => `
+  <h2>От первой строки —<br><span>к целому продукту.</span></h2>
+  <p class="lead-copy">Мне интересно не просто писать код, а понимать, как всё работает вместе: интерфейс, сервер и данные. Сейчас я на первом курсе и шаг за шагом собираю свой full-stack фундамент.</p>
+  <div class="approach"><div class="approach-icon" aria-hidden="true">&lt;/&gt;</div><div><h3>Думать о задаче целиком</h3><p>От пользовательского сценария до базы данных и деплоя.</p></div></div>
+  <div class="principles">
+    <article><span class="principle-index">01 / ПОДХОД</span><h3>Практика важнее теории</h3><p>Один работающий проект даёт больше, чем десять недоделанных страниц. Учусь, пробую и довожу до результата.</p></article>
+    <article><span class="principle-index">02 / ЦЕЛЬ</span><h3>Стать сильным инженером</h3><p>На каждом курсе — новый уровень: от вёрстки и frontend до архитектуры и полноценного продукта.</p></article>
+  </div>
+  <div class="focus-strip"><span>Сейчас в фокусе <strong>↗</strong></span><span class="mono">HTML / CSS / JavaScript</span></div>
+`;
+function renderSkills() {
+  const stack = ['HTML','CSS','JavaScript','TypeScript','React','Node.js','Express','SQL','REST API','Git','Docker','Figma'];
+  const skills = [
+    ['Интерфейсы','HTML, CSS, адаптивная вёрстка, JavaScript, React, компоненты, работа с состоянием и API.'],
+    ['Серверная часть','Node.js, Express, REST API, авторизация, обработка ошибок и структура backend-проекта.'],
+    ['Данные','SQL, базовое проектирование таблиц, связи, CRUD-операции и клиент-серверная логика.'],
+    ['Инструменты','Git, GitHub, Vite, npm, деплой, базовый Docker и аккуратная работа с задачами.']
+  ];
+  return `<h2>Интерфейс. Логика.<br><span>И всё между ними.</span></h2>
+    <p class="lead-copy">Мой стек строится вокруг полного цикла разработки: сверстать, оживить, подключить сервер и сохранить данные.</p>
+    <div class="stack-cloud" aria-label="Технологии">${stack.map(s=>`<span>${escapeHtml(s)}</span>`).join('')}</div>
+    <div class="skill-list">${skills.map(([title,text],i)=>`<article class="skill-row"><span class="row-index">0${i+1}</span><div><h3>${escapeHtml(title)}</h3><p>${escapeHtml(text)}</p></div></article>`).join('')}</div>`;
+}
+function coursePanel() {
+  const course = courseDetails.find(c=>c.id===currentCourse);
+  return `<div class="course-stage-head"><span class="eyebrow">${escapeHtml(course.number)} / ${escapeHtml(course.focus)}</span><h3>${escapeHtml(course.title)}</h3><p>${escapeHtml(course.description)}</p></div>
+  <div class="course-card-grid">${course.cards.map(c=>`<article class="course-card"><span>${escapeHtml(c.label)}</span><h4>${escapeHtml(c.title)}</h4><p>${escapeHtml(c.text)}</p></article>`).join('')}</div>`;
+}
+function renderCourses() {
+  const labels=['Основы','Frontend','Backend','Продукт'];
+  return `<h2>Большой путь.<br><span>Понятные шаги.</span></h2><p class="lead-copy">Четыре курса — от первой страницы до выпускного продукта. На каждом этапе свой фокус, практика и новые навыки.</p>
+    <div class="course-tabs" role="tablist" aria-label="Курсы обучения">${courseDetails.map((c,i)=>`<button class="course-tab" id="course-${c.id}" data-course="${c.id}" role="tab" aria-selected="${c.id===currentCourse}" aria-controls="courseDetail" tabindex="${c.id===currentCourse?0:-1}" type="button"><span>0${i+1}</span><small>${labels[i]}</small></button>`).join('')}</div>
+    <div id="courseDetail" role="tabpanel" aria-labelledby="course-${currentCourse}" tabindex="0">${coursePanel()}</div>`;
+}
+function renderProjects() {
+  const projects=[
+    ['Личное портфолио','PORTFOLIO','Этот сайт: навыки, план развития по курсам и собственное пространство для проектов.'],
+    ['Full-stack SPA','SPA','Приложение на React с авторизацией, личным кабинетом, API и сохранением данных в базе.'],
+    ['REST API сервис','API','Backend на Node.js и Express: маршруты, контроллеры, валидация, база данных и документация.'],
+    ['Выпускной продукт','FINAL','Итоговый full-stack проект: от идеи и архитектуры до деплоя и защиты.']
+  ];
+  return `<h2>Код становится<br><span>чем-то настоящим.</span></h2><p class="lead-copy">Моё портфолио и направления следующих работ: взять идею, собрать интерфейс, написать логику и объяснить, как всё работает.</p><div class="project-list">${projects.map(([title,label,text],i)=>`<article class="project-row"><span class="row-index">0${i+1}</span><div><div class="project-topline"><h3>${escapeHtml(title)}</h3><span class="project-kind">${label}</span></div><p>${escapeHtml(text)}</p>${i===0?'<a class="project-source" href="https://github.com/Tractorenok/RoadMAP" target="_blank" rel="noopener noreferrer">Исходный код <span aria-hidden="true">↗</span></a>':''}</div></article>`).join('')}</div>`;
+}
+const screens = {about,skills:renderSkills,courses:renderCourses,projects:renderProjects};
+const kickers = {about:'НЕМНОГО ОБО МНЕ',skills:'ТЕХНИЧЕСКИЕ НАВЫКИ',courses:'ПЛАН РАЗВИТИЯ',projects:'ПОРТФОЛИО И ПЛАНЫ'};
+function renderTab(id,animate=true) {
+  if (!screens[id]) return;
+  currentTab=id;
+  tabs.querySelectorAll('[role="tab"]').forEach(button=>{
+    const selected=button.dataset.tab===id;
+    button.classList.toggle('active',selected);
+    button.setAttribute('aria-selected',String(selected));
+    button.tabIndex=selected?0:-1;
+  });
+  kicker.textContent=kickers[id];
+  count.textContent='0'+(Object.keys(screens).indexOf(id)+1)+' / 04';
+  root.setAttribute('aria-labelledby','tab-'+id);
+  root.innerHTML=screens[id]();
+  root.classList.remove('is-entering');
+  if(animate) requestAnimationFrame(()=>root.classList.add('is-entering'));
+}
+function selectCourse(id) {
+  if(!courseDetails.some(c=>c.id===id)) return;
+  currentCourse=id;
+  root.querySelectorAll('[data-course]').forEach(button=>{
+    const selected=button.dataset.course===id;
+    button.setAttribute('aria-selected',String(selected));
+    button.tabIndex=selected?0:-1;
+  });
+  const detail=document.getElementById('courseDetail');
+  detail.setAttribute('aria-labelledby','course-'+id);
+  detail.innerHTML=coursePanel();
+}
+function moveTab(event,buttons,select) {
+  const keys=['ArrowLeft','ArrowRight','Home','End'];
+  if(!keys.includes(event.key)) return;
+  const items=Array.from(buttons);
+  const index=items.indexOf(event.target);
+  if(index<0) return;
+  event.preventDefault();
+  let next=event.key==='Home'?0:event.key==='End'?items.length-1:(index+(event.key==='ArrowRight'?1:-1)+items.length)%items.length;
+  items[next].focus();
+  select(items[next]);
+}
+tabs.addEventListener('click',event=>{
+  const button=event.target.closest('[data-tab]');
+  if(button) renderTab(button.dataset.tab);
+});
+tabs.addEventListener('keydown',event=>moveTab(event,tabs.querySelectorAll('[role="tab"]'),b=>renderTab(b.dataset.tab)));
+root.addEventListener('click',event=>{
+  const button=event.target.closest('[data-course]');
+  if(button) selectCourse(button.dataset.course);
+});
+root.addEventListener('keydown',event=>moveTab(event,root.querySelectorAll('[data-course]'),b=>selectCourse(b.dataset.course)));
+document.getElementById('contactButton').addEventListener('click',()=>dialog.showModal());
+document.getElementById('closeContact').addEventListener('click',()=>dialog.close());
+dialog.addEventListener('click',event=>{
+  const rect=dialog.getBoundingClientRect();
+  if(event.target===dialog&&(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)) dialog.close();
+});
+dialog.addEventListener('close',()=>document.getElementById('contactButton').focus());
+renderTab('about',false);

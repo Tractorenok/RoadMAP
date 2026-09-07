@@ -1,121 +1,44 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Full-stack разработчик | Портфолио</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#17110e"><meta name="description" content="Портфолио full-stack разработчика: навыки, проекты и путь от первых страниц до полноценного продукта.">
+<title>Tractorenok — Full-stack разработчик</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"><script src="script.js" defer></script>
 </head>
 <body>
-  <!-- Декоративный фон сайта: силуэты, шум и частицы находятся отдельно от основного контента. -->
-  <div class="scene" aria-hidden="true">
-    <div class="temple"></div>
-    <div class="mountains"></div>
-  </div>
-  <div class="noise" aria-hidden="true"></div>
-  <div class="snow" aria-hidden="true" id="snow"></div>
-  <!-- Кастомный курсор-точка, которым управляет JavaScript. -->
-  <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
-
-  <main class="shell">
-    <!-- Верхняя визитка: аватар, заголовок, мини-профиль, баннер и стек технологий. -->
-    <section class="hero" aria-label="профиль">
-      <div class="avatar">
-        <img src="assets/avatar-main.jpg" alt="Аватар full-stack разработчика">
-      </div>
-      <h1 class="title">Full-stack разработчик</h1>
-      <p class="subtitle">портфолио, навыки и рост по курсам</p>
-      <div class="profile-card">
-        <div class="mini-avatar">
-          <img src="assets/mini-card.jpg" alt="Миниатюра профиля">
-        </div>
-        <div class="profile-copy">
-          <strong>личный профиль разработчика</strong>
-          <span id="statusLine">1 курс: собираю базу full-stack</span>
-        </div>
-        <div class="verify">✓</div>
-      </div>
-      <div class="hero-image-card">
-        <img src="assets/hero-card.webp?v=20260605" alt="Фотография профиля">
-      </div>
-      <div class="socials" aria-label="стек">
-        <span>HTML</span>
-        <span>CSS</span>
-        <span>JS</span>
-        <span>React</span>
-        <span>Node</span>
-        <span>SQL</span>
-      </div>
-      <div class="contact-widget">
-        <button class="contact-trigger" type="button" id="contactButton" aria-expanded="false" aria-controls="contactPopup">
-          Контакты
-        </button>
-        <div class="contact-popup" id="contactPopup" role="dialog" aria-labelledby="contactTitle" aria-hidden="true">
-          <strong id="contactTitle">Мои контакты</strong>
-          <!-- Впиши свои контакты в строки ниже. -->
-          <p>Telegram: <a href="https://t.me/SexYTractorenok" target="_blank" rel="noopener noreferrer">@SexYTractorenok</a></p>
-          <p>Email: kostytractorenok@gmail.com</p>
-          <p>GitHub: <a href="https://github.com/Tractorenok" target="_blank" rel="noopener noreferrer">github.com/Tractorenok</a></p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Основной интерфейс портфолио: слева навигация, справа содержимое вкладок. -->
-    <section class="dashboard">
-      <!-- Левая панель: краткое описание профиля, текущий курс/фокус и кнопки вкладок. -->
-      <aside class="side-panel" aria-label="навигация портфолио">
-        <div class="profile-summary">
-          <span class="eyebrow">профиль</span>
-          <strong>Full-stack</strong>
-          <p>Разрабатываю интерфейсы, серверную логику и базы данных. Цель — выйти из колледжа с сильным портфолио и реальным коммерческим стеком.</p>
-        </div>
-
-        <div class="stats-grid">
-          <div class="stat">
-            <span>курс</span>
-            <strong id="courseLabel">1</strong>
-          </div>
-          <div class="stat">
-            <span>фокус</span>
-            <strong id="focusLabel">base</strong>
-          </div>
-        </div>
-
-        <div class="filters stage-tabs" id="tabContainer" role="tablist" aria-label="вкладки портфолио">
-          <button class="filter-btn stage-tab active" type="button" data-tab="about" role="tab" aria-selected="true">
-            <span>обо мне</span>
-            <small>01</small>
-          </button>
-          <button class="filter-btn stage-tab" type="button" data-tab="skills" role="tab" aria-selected="false">
-            <span>что я умею</span>
-            <small>02</small>
-          </button>
-          <button class="filter-btn stage-tab" type="button" data-tab="courses" role="tab" aria-selected="false">
-            <span>курс</span>
-            <small>03</small>
-          </button>
-          <button class="filter-btn stage-tab" type="button" data-tab="projects" role="tab" aria-selected="false">
-            <span>проекты</span>
-            <small>04</small>
-          </button>
-        </div>
-      </aside>
-
-      <!-- Правая панель: заголовок активного раздела и контейнер, куда JS подставляет контент. -->
-      <section class="roadmap portfolio-panel" aria-label="портфолио full-stack разработчика">
-        <div class="roadmap-head">
-          <div>
-            <span class="eyebrow" id="sectionKicker">личный профиль</span>
-            <h2 id="sectionTitle">Обо мне</h2>
-          </div>
-          <div class="ghost-tag" id="activeFilterLabel" hidden>full-stack</div>
-        </div>
-        <div class="portfolio-content" id="contentRoot"></div>
-      </section>
-    </section>
-  </main>
-
-  <script src="script.js"></script>
+<a class="skip-link" href="#portfolio">Перейти к портфолио</a><div class="ambient" aria-hidden="true"></div>
+<div class="site-wrap">
+<header class="masthead"><a class="wordmark" href="./" aria-label="Tractorenok — главная"><span class="brand-mark" aria-hidden="true">/t.</span>tractorenok<span class="brand-dot">.</span></a><span class="masthead-note mono">ЛИЧНОЕ ПОРТФОЛИО / 2026</span><a class="header-link" href="https://github.com/Tractorenok" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a></header>
+<main class="workspace">
+<aside class="identity" aria-label="Профиль разработчика">
+<div class="profile-label"><img src="assets/avatar-main.jpg" width="52" height="52" alt="Аватар Tractorenok"><div><strong>Tractorenok</strong><span><i class="status-dot" aria-hidden="true"></i>В процессе роста</span></div></div>
+<div class="identity-heading"><span class="eyebrow">КОД. ПРАКТИКА. РАЗВИТИЕ.</span><h1>Full-stack<br><span>разработчик.</span></h1><p class="identity-description">От первого интерфейса<br>до продукта, который работает.</p></div>
+<p class="identity-note">Учусь соединять дизайн, логику<br> и данные. Собираю опыт через<br> реальные задачи и свои проекты.</p>
+<button class="contact-button" id="contactButton" type="button" aria-haspopup="dialog">Давайте общаться <span aria-hidden="true">↗</span></button>
+<div class="identity-bottom"><div class="current-stage"><span class="stage-mark mono">01<span>/04</span></span><div><strong>Собираю фундамент</strong><span>Первый курс · Full-stack</span></div></div><div class="stage-line" aria-label="Первый из четырёх курсов"><span class="is-current"></span><span></span><span></span><span></span></div><div class="tech-line" aria-label="Стек технологий"><span>HTML</span><span>CSS</span><span>JS</span><span>React</span><span>Node</span><span>SQL</span></div></div>
+</aside>
+<section class="portfolio" id="portfolio" aria-label="Портфолио">
+<div class="section-nav" role="tablist" aria-label="Разделы портфолио" id="tabContainer">
+<button type="button" class="nav-tab active" id="tab-about" data-tab="about" role="tab" aria-selected="true" aria-controls="contentRoot"><span class="mono">01</span>Обо мне</button>
+<button type="button" class="nav-tab" id="tab-skills" data-tab="skills" role="tab" aria-selected="false" aria-controls="contentRoot" tabindex="-1"><span class="mono">02</span>Навыки</button>
+<button type="button" class="nav-tab" id="tab-courses" data-tab="courses" role="tab" aria-selected="false" aria-controls="contentRoot" tabindex="-1"><span class="mono">03</span>Мой путь</button>
+<button type="button" class="nav-tab" id="tab-projects" data-tab="projects" role="tab" aria-selected="false" aria-controls="contentRoot" tabindex="-1"><span class="mono">04</span>Проекты</button>
+</div>
+<div class="content-frame">
+<div class="chapter-meta"><span id="sectionKicker" class="eyebrow">НЕМНОГО ОБО МНЕ</span><span class="mono chapter-count" id="chapterCount">01 / 04</span></div>
+<div id="contentRoot" role="tabpanel" aria-labelledby="tab-about" tabindex="0"><h2>От первой строки —<br><span>к целому продукту.</span></h2><p class="lead-copy">Мне интересно понимать, как всё работает вместе: интерфейс, сервер и данные. Сейчас я на первом курсе и собираю свой full-stack фундамент.</p><noscript><p>Навыки: HTML, CSS, JavaScript, React, Node.js и SQL. План развития: основы, frontend и API, backend и базы данных, выпускной продукт. Для переключения разделов включите JavaScript. Контакты доступны внизу страницы.</p></noscript></div>
+<div class="panel-footer"><span><i class="status-dot" aria-hidden="true"></i>Каждый проект — следующий шаг</span><span class="mono" aria-hidden="true">&lt;/&gt;</span></div>
+</div>
+</section>
+</main>
+<footer class="site-footer"><span>© 2026 Tractorenok</span><span class="footer-motto">Постоянно учусь. Последовательно создаю.</span><a href="mailto:kostytractorenok@gmail.com">Написать мне <span aria-hidden="true">↗</span></a></footer>
+</div>
+<dialog id="contactDialog" aria-labelledby="contactTitle">
+<div class="dialog-heading"><span class="eyebrow">НА СВЯЗИ</span><button type="button" class="close-button" id="closeContact" aria-label="Закрыть контакты">×</button></div><h2 id="contactTitle">Начнём с <span>привет.</span></h2><p>Идея, вопрос или интересный проект — пишите.</p>
+<div class="contact-links"><a href="https://t.me/SexYTractorenok" target="_blank" rel="noopener noreferrer"><span><small>Telegram</small>@SexYTractorenok</span><span aria-hidden="true">↗</span></a><a href="mailto:kostytractorenok@gmail.com"><span><small>Email</small>kostytractorenok@gmail.com</span><span aria-hidden="true">↗</span></a><a href="https://github.com/Tractorenok" target="_blank" rel="noopener noreferrer"><span><small>GitHub</small>github.com/Tractorenok</span><span aria-hidden="true">↗</span></a></div>
+</dialog>
 </body>
 </html>
-    
